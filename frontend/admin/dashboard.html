@@ -1,0 +1,201 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Admin Dashboard | E-Book Library</title>
+    <!-- Base styles -->
+    <link rel="stylesheet" href="../css/main.css">
+    <link rel="stylesheet" href="admin.css">
+    <link href='https://unpkg.com/boxicons@2.1.4/css/boxicons.min.css' rel='stylesheet'>
+    
+    <!-- Debug scripts -->
+    <script>
+        console.log('Dashboard loading...');
+        
+        // Log any 404 errors
+        window.addEventListener('error', function(e) {
+            console.error('Resource load error:', {
+                src: e.target.src,
+                href: e.target.href,
+                type: e.target.tagName,
+                path: window.location.pathname
+            });
+        });
+
+        // Log current auth state
+        console.log('Auth state:', {
+            user: localStorage.getItem('user'),
+            token: !!localStorage.getItem('token'),
+            path: window.location.pathname
+        });
+    </script>
+</head>
+<body class="admin-body">
+    <!-- Sidebar -->
+    <aside class="admin-sidebar">
+        <div class="sidebar-header">
+            <i class='bx bx-book-reader'></i>
+            <span>E-Book Admin</span>
+        </div>
+        
+        <nav class="sidebar-nav">
+            <a href="dashboard.html" class="active">
+                <i class='bx bxs-dashboard'></i>
+                <span>Dashboard</span>
+                <span class="difficulty easy">Easy</span>
+            </a>
+            <a href="books.html">
+                <i class='bx bx-library'></i>
+                <span>Book Management</span>
+                <span class="difficulty medium">Medium</span>
+            </a>
+            <a href="users.html">
+                <i class='bx bx-user'></i>
+                <span>User Management</span>
+                <span class="difficulty medium">Medium</span>
+            </a>
+            <a href="reviews.html">
+                <i class='bx bx-star'></i>
+                <span>Reviews</span>
+                <span class="difficulty easy">Easy</span>
+            </a>
+            <a href="analytics.html">
+                <i class='bx bx-line-chart'></i>
+                <span>Analytics</span>
+                <span class="difficulty hard">Hard</span>
+            </a>
+            <a href="categories.html">
+                <i class='bx bx-category'></i>
+                <span>Categories</span>
+                <span class="difficulty easy">Easy</span>
+            </a>
+            <a href="settings.html">
+                <i class='bx bx-cog'></i>
+                <span>Settings</span>
+                <span class="difficulty easy">Easy</span>
+            </a>
+        </nav>
+
+        <div class="sidebar-footer">
+            <button class="btn" onclick="logout()">
+                <i class='bx bx-log-out'></i>
+                <span>Logout</span>
+            </button>
+        </div>
+    </aside>
+
+    <!-- Main Content -->
+    <main class="admin-main">
+        <header class="admin-header">
+            <div>
+                <h1>Dashboard</h1>
+                <p class="muted">Overview of your digital library</p>
+            </div>
+            <div class="admin-profile">
+                <span id="adminName">Admin</span>
+                <div class="admin-avatar" id="adminInitial">A</div>
+            </div>
+        </header>
+
+        <!-- Quick Stats -->
+        <div class="stats-grid">
+            <div class="stat-card">
+                <div class="stat-icon books">
+                    <i class='bx bx-library'></i>
+                </div>
+                <div class="stat-content">
+                    <h3 id="totalBooks">...</h3>
+                    <p>Total Books</p>
+                </div>
+            </div>
+
+            <div class="stat-card">
+                <div class="stat-icon users">
+                    <i class='bx bx-user'></i>
+                </div>
+                <div class="stat-content">
+                    <h3 id="totalUsers">...</h3>
+                    <p>Active Users</p>
+                </div>
+            </div>
+
+            <div class="stat-card">
+                <div class="stat-icon reviews">
+                    <i class='bx bx-star'></i>
+                </div>
+                <div class="stat-content">
+                    <h3 id="totalReviews">...</h3>
+                    <p>Reviews</p>
+                </div>
+            </div>
+
+            <div class="stat-card">
+                <div class="stat-icon reads">
+                    <i class='bx bx-book-open'></i>
+                </div>
+                <div class="stat-content">
+                    <h3 id="totalReads">...</h3>
+                    <p>Total Reads</p>
+                </div>
+            </div>
+        </div>
+
+        <!-- Recent Activity -->
+        <section class="activity-section">
+            <h2>Recent Activity</h2>
+            <div class="activity-grid">
+                <div class="activity-card">
+                    <h3>Latest Books</h3>
+                    <div class="activity-list" id="latestBooks">
+                        <div class="placeholder-text">Loading...</div>
+                    </div>
+                </div>
+
+                <div class="activity-card">
+                    <h3>Recent Reviews</h3>
+                    <div class="activity-list" id="latestReviews">
+                        <div class="placeholder-text">Loading...</div>
+                    </div>
+                </div>
+
+                <div class="activity-card">
+                    <h3>New Users</h3>
+                    <div class="activity-list" id="latestUsers">
+                        <div class="placeholder-text">Loading...</div>
+                    </div>
+                </div>
+            </div>
+        </section>
+    </main>
+
+    <!-- Load authentication first -->
+    <script src="../js/api.js"></script>
+    <script src="../js/adminAuth.js"></script>
+    <script src="admin.js"></script>
+    
+    <!-- Debug info -->
+    <script>
+        console.log('Scripts loaded, checking paths:', {
+            currentPath: window.location.pathname,
+            scriptTags: document.getElementsByTagName('script').length,
+            styleTags: document.getElementsByTagName('link').length
+        });
+
+        // Verify all resources loaded
+        window.addEventListener('load', function() {
+            console.log('All resources loaded');
+            const scripts = Array.from(document.getElementsByTagName('script'));
+            const styles = Array.from(document.getElementsByTagName('link'));
+            
+            scripts.forEach(script => {
+                console.log('Script:', script.src);
+            });
+            
+            styles.forEach(style => {
+                console.log('Style:', style.href);
+            });
+        });
+    </script>
+</body>
+</html>

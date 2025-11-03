@@ -1,0 +1,166 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Open Library - Sign Up/Login</title>
+    <link rel="stylesheet" href="/frontend/css/login.css">
+    <script src="/frontend/js/api.js"></script>
+
+</head>
+<body>
+    <!-- Your main page content -->
+    <!-- <div class="main-content">
+        <h1>Welcome to Open Library</h1>
+        <button class="open-modal-btn" id="openModal">Open Sign Up</button>
+    </div> -->
+
+    <!-- Modal Overlay -->
+    <div class="modal-overlay" id="modalOverlay">
+        <div class="modal-container">
+            <button class="close-btn" id="closeModal">&times;</button>
+            
+            <!-- Sign Up Modal -->
+            <div class="modal-content" id="signupModal">
+                <!-- Left Section with Background Image -->
+                <div class="left-section signup-bg">
+                    <div class="overlay-content">
+                        <h1>Sign Up</h1>
+                        <p class="subtitle">Get your free Open Library card and borrow digital books from the nonprofit Internet Archive</p>
+                    </div>
+                </div>
+                
+                <!-- Right Section - Form -->
+                <div class="right-section">
+                    <button class="google-btn">
+                        <img src="https://www.gstatic.com/firebasejs/ui/2.0.0/images/auth/google.svg" alt="Google" class="google-icon">
+                        Sign in with Google
+                    </button>
+                    
+                    <div class="divider">
+                        <span>OR</span>
+                    </div>
+                    
+                    <form id="signupForm">
+                        <div class="form-group">
+                            <label for="email">Email</label>
+                            <input type="email" id="email" name="email" required>
+                        </div>
+
+                        <div class="form-group">
+                            <label for="adminCode">Admin Code (Leave empty if you're not an admin)</label>
+                            <input type="password" id="adminCode" name="adminCode" placeholder="Enter admin code if applicable">
+                        </div>
+                        
+                        <div class="form-group">
+                            <label for="screenName">Screen Name</label>
+                            <input type="text" id="screenName" name="screenName" required>
+                            <p class="helper-text">Public and cannot be changed later.</p>
+                            <p class="url-text">Your URL: https://openlibrary.org/people/<span id="urlPreview">screenname</span></p>
+                        </div>
+                        
+                        <div class="form-group">
+                            <label for="password">Password</label>
+                            <div class="password-wrapper">
+                                <input type="password" id="password" name="password" required>
+                                <button type="button" class="toggle-password" id="togglePassword">
+                                    <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor">
+                                        <path d="M17.94 17.94A10.07 10.07 0 0 1 12 20c-7 0-11-8-11-8a18.45 18.45 0 0 1 5.06-5.94M9.9 4.24A9.12 9.12 0 0 1 12 4c7 0 11 8 11 8a18.5 18.5 0 0 1-2.16 3.19m-6.72-1.07a3 3 0 1 1-4.24-4.24"></path>
+                                        <line x1="1" y1="1" x2="23" y2="23"></line>
+                                    </svg>
+                                </button>
+                            </div>
+                        </div>
+                        
+                        <div class="checkbox-group">
+                            <input type="checkbox" id="newsletter" name="newsletter">
+                            <label for="newsletter">
+                                I want to receive news, announcements, and resources from the 
+                                <a href="#">Internet Archive</a>, the non-profit that runs Open Library.
+                            </label>
+                        </div>
+                        
+                        <div class="checkbox-group">
+                            <input type="checkbox" id="disability" name="disability">
+                            <label for="disability">
+                                I want to apply* for <a href="#">special print disability access</a> through a qualifying program.
+                            </label>
+                        </div>
+                        
+                        <button type="submit" class="submit-btn">Sign Up with Email</button>
+                        
+                        <p class="terms">
+                            By signing up, you agree to the Internet Archive's 
+                            <a href="#">Terms of Service</a>.
+                        </p>
+                    </form>
+                    
+                    <p class="login-link">
+                        Already have an account? <a href="#" id="showLogin">Log in</a>
+                    </p>
+                </div>
+            </div>
+
+            <!-- Login Modal -->
+            <div class="modal-content" id="loginModal" style="display: none;">
+                <!-- Left Section with Different Background Image -->
+                <div class="left-section login-bg">
+                    <div class="overlay-content">
+                        <h1>Log In</h1>
+                        <p class="subtitle">Access your Open Library account and continue reading digital books from the Internet Archive</p>
+                    </div>
+                </div>
+                
+                <!-- Right Section - Form -->
+                <div class="right-section">
+                    <button class="google-btn">
+                        <img src="https://www.gstatic.com/firebasejs/ui/2.0.0/images/auth/google.svg" alt="Google" class="google-icon">
+                        Sign in with Google
+                    </button>
+                    
+                    <div class="divider">
+                        <span>OR</span>
+                    </div>
+                    
+                    <form id="loginForm">
+                        <div class="form-group">
+                            <label for="loginEmail">Email or Username</label>
+                            <input type="text" id="loginEmail" name="loginEmail" required>
+                        </div>
+                        
+                        <div class="form-group">
+                            <label for="loginPassword">Password</label>
+                            <div class="password-wrapper">
+                                <input type="password" id="loginPassword" name="loginPassword" required>
+                                <button type="button" class="toggle-password" id="toggleLoginPassword">
+                                    <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor">
+                                        <path d="M17.94 17.94A10.07 10.07 0 0 1 12 20c-7 0-11-8-11-8a18.45 18.45 0 0 1 5.06-5.94M9.9 4.24A9.12 9.12 0 0 1 12 4c7 0 11 8 11 8a18.5 18.5 0 0 1-2.16 3.19m-6.72-1.07a3 3 0 1 1-4.24-4.24"></path>
+                                        <line x1="1" y1="1" x2="23" y2="23"></line>
+                                    </svg>
+                                </button>
+                            </div>
+                        </div>
+                        
+                        <div class="checkbox-group">
+                            <input type="checkbox" id="rememberMe" name="rememberMe">
+                            <label for="rememberMe">Remember me</label>
+                        </div>
+                        
+                        <button type="submit" class="submit-btn">Log In</button>
+                        
+                        <p class="forgot-password">
+                            <a href="#">Forgot your password?</a>
+                        </p>
+                    </form>
+                    
+                    <p class="login-link">
+                        Don't have an account? <a href="#" id="showSignup">Sign up</a>
+                    </p>
+                </div>
+            </div>
+        </div>
+    </div>
+    
+    <script src="/frontend/js/login.js"></script>
+</body>
+</html>

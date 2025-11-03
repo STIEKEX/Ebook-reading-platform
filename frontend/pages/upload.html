@@ -1,0 +1,80 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Upload a Book</title>
+    <link href='https://unpkg.com/boxicons@2.1.4/css/boxicons.min.css' rel='stylesheet'>
+    <link rel="stylesheet" href="../css/upload.css">
+</head>
+<body>
+    <div class="upload-container">
+        <div class="upload-box">
+            <h1>Upload a Book</h1>
+            <p class="subtitle">Share your favorite books with the community</p>
+
+            <form id="uploadForm">
+                <div class="form-group">
+                    <label>Book PDF <span class="required">*</span></label>
+                    <div class="pdf-upload" id="pdfUpload">
+                        <i class='bx bx-cloud-upload'></i>
+                        <p>Drag & drop PDF here or click to browse</p>
+                        <input type="file" id="pdfInput" accept=".pdf" hidden required>
+                    </div>
+                    <span id="pdfName" class="file-name"></span>
+                </div>
+
+                <div class="form-group">
+                    <label>Book Cover Image <span class="required">*</span></label>
+                    <input type="file" id="coverInput" accept="image/*" required>
+                </div>
+
+                <div class="form-group">
+                    <label>Book Title <span class="required">*</span></label>
+                    <input type="text" id="titleInput" placeholder="Enter book title" required>
+                </div>
+
+                <div class="form-group">
+                    <label>Author <span class="required">*</span></label>
+                    <input type="text" id="authorInput" placeholder="Enter author name" required>
+                </div>
+
+                <div class="form-group">
+                    <label>Description <span class="required">*</span></label>
+                    <textarea id="descInput" rows="4" placeholder="Write a brief description" required></textarea>
+                </div>
+
+                <div class="form-group">
+                    <label>Category <span class="required">*</span></label>
+                    <select id="categoryInput" required>
+                        <option value="">Select category</option>
+                        <option value="trending">📚 Trending Books</option>
+                        <option value="self-help">💡 Self Help</option>
+                        <option value="fiction">📖 Fiction</option>
+                        <option value="romance">💕 Romance</option>
+                        <option value="mystery">🔍 Mystery</option>
+                        <option value="biography">👤 Biography</option>
+                        <option value="science">🔬 Science</option>
+                    </select>
+                </div>
+
+                <div class="form-group">
+                    <label>Tags (comma separated)</label>
+                    <input type="text" id="tagsInput" placeholder="e.g. motivation, success, habits">
+                </div>
+
+                <div class="checkbox-group">
+                    <input type="checkbox" id="termsCheck" required>
+                    <label for="termsCheck">I confirm that I have the rights to upload this book and agree to the terms of service</label>
+                </div>
+
+                <button type="submit" class="upload-btn">
+                    <i class='bx bx-upload'></i> Upload Book
+                </button>
+            </form>
+        </div>
+    </div>
+
+    <script src="../js/upload.js"></script>
+</body>
+</html>

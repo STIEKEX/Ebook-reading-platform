@@ -1,0 +1,161 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Profile</title>
+  <link rel="stylesheet" href="../css/main.css">
+</head>
+<body>
+  <div class="page-wrapper">
+    <div class="page-card">
+      <div class="page-header">
+        <div>
+          <div class="page-title">My Profile</div>
+          <div class="muted">Manage your account details</div>
+        </div>
+        <div>
+          <button class="btn brand" onclick="goHome()">← Back</button>
+        </div>
+      </div>
+
+      <div id="successMsg" class="muted" style="margin-bottom:12px; display:none;"></div>
+
+      <section style="margin-bottom:20px;">
+        <h3 style="margin-bottom:10px;">Account</h3>
+        <div style="display:flex; gap:12px; align-items:center;">
+          <div style="width:64px; height:64px; border-radius:12px; background:#f3f4f6; display:flex; align-items:center; justify-content:center; font-weight:700;">
+            <span id="avatarInitial">T</span>
+          </div>
+          <div>
+            <div id="userEmail" class="muted">Loading...</div>
+            <div id="userUsername" style="font-weight:700;">Loading...</div>
+            <div id="userType" class="muted">Loading...</div>
+          </div>
+        </div>
+      </section>
+
+      <section style="margin-bottom:18px;">
+        <h4 style="margin-bottom:10px;">Edit Profile</h4>
+        <div class="form-group row">
+          <input id="fullName" placeholder="Full name">
+        </div>
+        <div class="form-group row" style="margin-top:10px;">
+          <input id="avatar" placeholder="Avatar URL">
+        </div>
+  <div style="margin-top:12px;"><button class="btn brand" onclick="handleUpdateProfile()">Save changes</button></div>
+      </section>
+
+      <section>
+        <h4 style="margin-bottom:10px;">Security</h4>
+        <div class="form-group row">
+          <input type="password" id="oldPassword" placeholder="Current password">
+        </div>
+        <div class="form-group row" style="margin-top:10px;">
+          <input type="password" id="newPassword" placeholder="New password">
+        </div>
+        <div class="form-group row" style="margin-top:10px;">
+          <input type="password" id="confirmPassword" placeholder="Confirm new password">
+        </div>
+  <div style="margin-top:12px;"><button class="btn" onclick="handleChangePassword()">Change password</button></div>
+      </section>
+
+      <section style="margin-top:18px;">
+        <h4 style="margin-bottom:10px; color:#ef4444">Danger zone</h4>
+        <button class="btn" style="background:#fff; color:#ef4444; border:1px solid #fee2e2;" onclick="logoutUser()">Logout</button>
+      </section>
+    </div>
+  </div>
+
+  <script src="../js/api.js"></script>
+  <script>
+    document.addEventListener('DOMContentLoaded', async () => {
+      if (!isLoggedIn()) {
+        window.location.href = 'login.html';
+        return;
+      }
+
+      const user = getCurrentUser();
+      const profile = await getProfile();
+
+      document.getElementById('userEmail').textContent = profile.email;
+      document.getElementById('userUsername').textContent = profile.username;
+      document.getElementById('userType').textContent = profile.isAdmin ? 'Admin' : 'User';
+
+      document.getElementById('fullName').value = profile.profile?.name || '';
+      document.getElementById('avatar').value = profile.profile?.avatar || '';
+  // set avatar initial
+  const displayName = profile.profile?.name || profile.username || (profile.email && profile.email.split('@')[0]) || 'U';
+  const initial = displayName[0] ? displayName[0].toUpperCase() : 'U';
+  const avatarElem = document.getElementById('avatarInitial');
+  if (avatarElem) avatarElem.textContent = initial;
+    });
+
+  async function handleUpdateProfile() {
+      const name = document.getElementById('fullName').value;
+      const avatar = document.getElementById('avatar').value;
+
+      if (!name) {
+        alert('Please enter your name');
+        return;
+      }
+
+      const result = await updateProfile(name, avatar);
+        if (result.message) {
+          showMessage('Profile updated successfully!');
+        } else {
+          alert('Error updating profile');
+        }
+    }
+
+  async function handleChangePassword() {
+      const oldPassword = document.getElementById('oldPassword').value;
+      const newPassword = document.getElementById('newPassword').value;
+      const confirmPassword = document.getElementById('confirmPassword').value;
+
+      if (!oldPassword || !newPassword) {
+        alert('Please fill all fields');
+        return;
+      }
+
+      if (newPassword !== confirmPassword) {
+        alert('Passwords do not match');
+        return;
+      }
+
+      if (newPassword.length < 6) {
+        alert('Password must be at least 6 characters');
+        return;
+      }
+
+      const result = await changePassword(oldPassword, newPassword);
+        if (result.message) {
+          showMessage('Password changed successfully!');
+          document.getElementById('oldPassword').value = '';
+          document.getElementById('newPassword').value = '';
+          document.getElementById('confirmPassword').value = '';
+        } else {
+          alert('Error: ' + result.message);
+        }
+    }
+
+      function showMessage(msg) {
+        const elem = document.getElementById('successMsg');
+        elem.textContent = msg;
+        elem.style.display = 'block';
+        setTimeout(() => { elem.style.display = 'none'; }, 3000);
+      }
+
+
+    function logoutUser() {
+      if (confirm('Are you sure you want to logout?')) {
+        logout();
+      }
+    }
+
+    function goHome() {
+      window.location.href = '../main.html';
+    }
+  </script>
+</body>
+</html>

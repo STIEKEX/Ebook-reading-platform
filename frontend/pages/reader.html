@@ -1,0 +1,426 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Reading...</title>
+  <style>
+    * { margin: 0; padding: 0; box-sizing: border-box; }
+    body { font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; background: #111; color: #fff; }
+    
+    .reader-container {
+      display: flex;
+      flex-direction: column;
+      height: 100vh;
+      background: #1a1a1a;
+    }
+
+    .reader-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      padding: 15px 30px;
+      background: #222;
+      border-bottom: 1px solid #333;
+    }
+
+    .book-title { font-size: 18px; font-weight: 600; }
+
+    .reader-controls {
+      display: flex;
+      gap: 10px;
+      align-items: center;
+    }
+
+    button {
+      padding: 8px 15px;
+      background: #4CAF50;
+      color: white;
+      border: none;
+      border-radius: 5px;
+      cursor: pointer;
+      font-size: 14px;
+      transition: 0.3s;
+    }
+
+    button:hover { background: #45a049; }
+    button.secondary { background: #2196F3; }
+    button.secondary:hover { background: #0b7dda; }
+
+    .reader-content {
+      flex: 1;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      overflow: hidden;
+      background: #0a0a0a;
+    }
+
+    .book-page {
+      max-width: 90%;
+      max-height: 90%;
+      object-fit: contain;
+      box-shadow: 0 0 20px rgba(0,0,0,0.8);
+      user-select: none;
+    }
+
+    .reader-footer {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      padding: 15px 30px;
+      background: #222;
+      border-top: 1px solid #333;
+    }
+
+    .progress-bar {
+      flex: 1;
+      height: 5px;
+      background: #333;
+      border-radius: 3px;
+      margin: 0 15px;
+      cursor: pointer;
+    }
+
+    .progress-fill {
+      height: 100%;
+      background: #4CAF50;
+      border-radius: 3px;
+      transition: width 0.3s;
+    }
+
+    .page-info { font-size: 14px; color: #aaa; }
+
+    .modal {
+      display: none;
+      position: fixed;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      background: rgba(0,0,0,0.8);
+      z-index: 1000;
+      justify-content: center;
+      align-items: center;
+    }
+
+    .modal.active { display: flex; }
+
+    .modal-content {
+      background: #222;
+      padding: 30px;
+      border-radius: 10px;
+      width: 90%;
+      max-width: 400px;
+      box-shadow: 0 0 30px rgba(0,0,0,0.9);
+    }
+
+    .modal-title { font-size: 18px; margin-bottom: 20px; }
+
+    .form-group {
+      margin-bottom: 15px;
+      display: flex;
+      flex-direction: column;
+    }
+
+    label { margin-bottom: 5px; font-size: 14px; color: #aaa; }
+
+    input, textarea {
+      padding: 10px;
+      background: #333;
+      color: white;
+      border: 1px solid #444;
+      border-radius: 5px;
+      font-family: inherit;
+    }
+
+    textarea { resize: vertical; }
+
+    .modal-buttons {
+      display: flex;
+      gap: 10px;
+      margin-top: 20px;
+    }
+
+    .modal-buttons button { flex: 1; }
+
+    .close-btn {
+      position: absolute;
+      top: 15px;
+      right: 20px;
+      background: none;
+      color: #aaa;
+      font-size: 24px;
+      cursor: pointer;
+      padding: 0;
+      width: 30px;
+      height: 30px;
+    }
+
+    .rating {
+      display: flex;
+      gap: 5px;
+      font-size: 24px;
+      margin-bottom: 10px;
+    }
+
+    .star { cursor: pointer; color: #666; transition: 0.2s; }
+    .star.active { color: #FFD700; }
+  </style>
+</head>
+<body>
+  <div class="reader-container">
+    <div class="reader-header">
+      <div class="book-title" id="bookTitle">Loading...</div>
+      <div class="reader-controls">
+        <button class="secondary" onclick="openBookmark()">📌 Bookmarks</button>
+        <button onclick="toggleFavorite()" id="favoriteBtn">❤️ Add to Favorites</button>
+        <button class="secondary" onclick="openReviewModal()">⭐ Review</button>
+        <button onclick="goBack()">← Back</button>
+      </div>
+    </div>
+
+    <div class="reader-content">
+      <img id="bookPage" class="book-page" src="" alt="Book page" />
+    </div>
+
+    <div class="reader-footer">
+      <button onclick="prevPage()">← Previous</button>
+      <div class="progress-bar" onclick="seekPage(event)">
+        <div class="progress-fill" id="progressFill"></div>
+      </div>
+      <button onclick="nextPage()">Next →</button>
+      <div class="page-info">
+        <span id="pageCounter">1 / 1</span>
+        <button onclick="toggleBookmark()" style="padding: 5px 10px; font-size: 12px; margin-left: 10px;">📌 Bookmark</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- Review Modal -->
+  <div class="modal" id="reviewModal">
+    <div class="modal-content">
+      <span class="close-btn" onclick="closeReviewModal()">×</span>
+      <div class="modal-title">Write a Review</div>
+      <div class="form-group">
+        <label>Rating</label>
+        <div class="rating" id="ratingStars"></div>
+      </div>
+      <div class="form-group">
+        <label>Your Review</label>
+        <textarea id="reviewText" placeholder="Write your thoughts about this book..." rows="4"></textarea>
+      </div>
+      <div class="modal-buttons">
+        <button onclick="submitReview()">Submit Review</button>
+        <button class="secondary" onclick="closeReviewModal()">Cancel</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- Bookmarks Modal -->
+  <div class="modal" id="bookmarksModal">
+    <div class="modal-content">
+      <span class="close-btn" onclick="closeBookmarksModal()">×</span>
+      <div class="modal-title">Your Bookmarks</div>
+      <div id="bookmarksList"></div>
+      <div class="modal-buttons">
+        <button class="secondary" onclick="closeBookmarksModal()">Close</button>
+      </div>
+    </div>
+  </div>
+
+  <script src="../js/api.js"></script>
+  <script>
+    let bookId, currentPage = 1, totalPages = 1, bookmarks = [];
+    let currentRating = 0;
+
+    document.addEventListener('DOMContentLoaded', async () => {
+      if (!isLoggedIn()) {
+        window.location.href = 'login.html';
+        return;
+      }
+
+      // Get book ID from URL
+      const params = new URLSearchParams(window.location.search);
+      bookId = params.get('id');
+
+      if (!bookId) {
+        alert('Book not found');
+        window.location.href = 'main.html';
+        return;
+      }
+
+      // Load book details
+      const book = await getBookById(bookId);
+      if (!book) {
+        alert('Book not found');
+        window.location.href = 'main.html';
+        return;
+      }
+
+      document.getElementById('bookTitle').textContent = book.title;
+      totalPages = book.totalPages;
+
+      // Get user's progress
+      const progress = await getProgress(bookId);
+      currentPage = progress.lastReadPage || 1;
+      bookmarks = progress.bookmarks || [];
+
+      // Load current page
+      await loadPage(currentPage);
+
+      // Load user's review for rating display
+      const userReview = await getUserReview(bookId);
+      if (userReview) {
+        currentRating = userReview.rating;
+      }
+
+      // Update favorite button
+      if (progress.isFavorite) {
+        document.getElementById('favoriteBtn').textContent = '❤️ Remove from Favorites';
+      }
+
+      // Create rating stars
+      createRatingStars();
+    });
+
+    async function loadPage(pageNum) {
+      const pageData = await getBookPage(bookId, pageNum);
+      if (!pageData || !pageData.page) {
+        alert('Page not found');
+        return;
+      }
+
+      document.getElementById('bookPage').src = pageData.page.imageUrl;
+      document.getElementById('pageCounter').textContent = `${currentPage} / ${totalPages}`;
+      document.getElementById('progressFill').style.width = `${(currentPage / totalPages) * 100}%`;
+
+      // Save progress
+      await saveProgress(bookId, currentPage);
+
+      // Update bookmark button
+      updateBookmarkButton();
+    }
+
+    function nextPage() {
+      if (currentPage < totalPages) {
+        currentPage++;
+        loadPage(currentPage);
+      }
+    }
+
+    function prevPage() {
+      if (currentPage > 1) {
+        currentPage--;
+        loadPage(currentPage);
+      }
+    }
+
+    function seekPage(event) {
+      const bar = event.currentTarget;
+      const clickX = event.offsetX;
+      const width = bar.offsetWidth;
+      const page = Math.ceil((clickX / width) * totalPages);
+      currentPage = Math.max(1, Math.min(page, totalPages));
+      loadPage(currentPage);
+    }
+
+    async function toggleFavorite() {
+      const result = await toggleFavorite(bookId);
+      if (result.isFavorite) {
+        document.getElementById('favoriteBtn').textContent = '❤️ Remove from Favorites';
+      } else {
+        document.getElementById('favoriteBtn').textContent = '❤️ Add to Favorites';
+      }
+    }
+
+    async function toggleBookmark() {
+      if (bookmarks.includes(currentPage)) {
+        await removeBookmark(bookId, currentPage);
+        bookmarks = bookmarks.filter(p => p !== currentPage);
+      } else {
+        await addBookmark(bookId, currentPage);
+        bookmarks.push(currentPage);
+      }
+      updateBookmarkButton();
+    }
+
+    function updateBookmarkButton() {
+      const btn = document.querySelector('.page-info button');
+      if (bookmarks.includes(currentPage)) {
+        btn.style.background = '#FFD700';
+        btn.style.color = '#000';
+      } else {
+        btn.style.background = '#4CAF50';
+        btn.style.color = '#fff';
+      }
+    }
+
+    function openReviewModal() {
+      document.getElementById('reviewModal').classList.add('active');
+    }
+
+    function closeReviewModal() {
+      document.getElementById('reviewModal').classList.remove('active');
+    }
+
+    function createRatingStars() {
+      const container = document.getElementById('ratingStars');
+      container.innerHTML = '';
+      for (let i = 1; i <= 5; i++) {
+        const star = document.createElement('span');
+        star.className = `star ${i <= currentRating ? 'active' : ''}`;
+        star.textContent = '★';
+        star.onclick = () => {
+          currentRating = i;
+          createRatingStars();
+        };
+        container.appendChild(star);
+      }
+    }
+
+    async function submitReview() {
+      if (currentRating === 0) {
+        alert('Please select a rating');
+        return;
+      }
+
+      const reviewText = document.getElementById('reviewText').value;
+      const result = await addReview(bookId, currentRating, reviewText);
+      
+      if (result.message) {
+        alert('Review submitted successfully!');
+        closeReviewModal();
+        document.getElementById('reviewText').value = '';
+      } else {
+        alert('Error submitting review');
+      }
+    }
+
+    function openBookmark() {
+      document.getElementById('bookmarksModal').classList.add('active');
+      const list = document.getElementById('bookmarksList');
+      
+      if (bookmarks.length === 0) {
+        list.innerHTML = '<p style="color: #aaa;">No bookmarks yet</p>';
+        return;
+      }
+
+      list.innerHTML = bookmarks.map(page => `
+        <div style="display: flex; justify-content: space-between; padding: 10px; background: #333; margin-bottom: 5px; border-radius: 5px;">
+          <span onclick="currentPage = ${page}; loadPage(${page}); closeBookmarksModal();" style="cursor: pointer; flex: 1;">Page ${page}</span>
+          <button onclick="removeBookmark(${bookId}, ${page}); openBookmark();" style="padding: 5px 10px; font-size: 12px;">Remove</button>
+        </div>
+      `).join('');
+    }
+
+    function closeBookmarksModal() {
+      document.getElementById('bookmarksModal').classList.remove('active');
+    }
+
+    function goBack() {
+      window.location.href = 'main.html';
+    }
+  </script>
+</body>
+</html>

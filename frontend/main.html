@@ -1,0 +1,810 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Online E-book Reading Project</title>
+  
+  <!-- CSS Files with correct paths -->
+  <link rel="stylesheet" href="./css/main.css">
+  <link rel="stylesheet" href="./css/modal.css">
+  
+  <!-- External libraries -->
+  <link href='https://unpkg.com/boxicons@2.1.4/css/boxicons.min.css' rel='stylesheet'>
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+  <script src="https://accounts.google.com/gsi/client" async defer></script>
+  
+  <!-- API Helper (MUST be before main.js) -->
+  <script src="./js/api.js"></script>
+</head>
+<body>
+  <header>
+    <div class="nav-bar">
+
+      <div class="logo">   
+      
+        <!-- logo -->
+         
+      </div>
+  <nav class="navbar">
+    <!-- nav bar -->
+    <a class="Home" >Home</a>
+    
+    <!-- Categories Dropdown -->
+    <div class="categories-dropdown">
+        <a class="Categories">
+            Categories 
+            <i class='bx bx-chevron-down'></i>
+        </a>
+        
+        <div class="dropdown-content">
+            <a href="#" data-category="trending">📚 Trending Books</a>
+            <a href="#" data-category="self-help">💡 Self Help</a>
+            <a href="#" data-category="fiction">📖 Fiction</a>
+            <a href="#" data-category="romance">💕 Romance</a>
+            <a href="#" data-category="mystery">🔍 Mystery</a>
+            <a href="#" data-category="biography">👤 Biography</a>
+            <a href="#" data-category="science">🔬 Science</a>
+            <a href="#" data-category="all">🌐 All Books</a>
+        </div>
+    </div>
+    
+    <a class="My-books">My Books</a>
+    <a class="Upload"  href="./pages/upload.html">Upload</a> 
+</nav>
+
+
+        <div class="search-bar">
+            <div class="search-icon">
+                <i class='bx bx-search'></i>
+                <!-- icon -->
+            </div>
+
+            <input type="input-box" id="searchInput"  placeholder="What book are you looking for?" >
+        </div>
+
+        
+
+
+        <!-- <div class="login">
+          <button class="signin-btn">Sign In</button>
+          <button class="signup-btn">Sign Up</button>
+        </div> -->
+
+
+        <!-- Sign In and Sign Up buttons -->
+<div class="login">
+  <button class="signin-btn">Login</button>
+  <button class="signup-btn">Sign Up</button>
+</div>
+      
+    </div>
+  </header>
+
+  <!-- Auth Modal Overlay -->
+  <div class="modal-overlay" id="modalOverlay">
+    <div class="modal-container">
+      <button class="close-btn" id="closeModal">&times;</button>
+      
+      <!-- Left Section with Background Image -->
+      <div class="left-section">
+        <div class="overlay-content">
+          <h1 id="modalTitle">Sign Up</h1>
+          <p class="subtitle">Get your free Open Library card and borrow digital books from the nonprofit Internet Archive</p>
+        </div>
+      </div>
+      
+      <!-- Right Section - Forms -->
+      <div class="right-section">
+        <!-- Sign Up Form -->
+        <div id="signupForm" class="auth-form active">
+          <button class="google-btn">
+            <img src="https://www.gstatic.com/firebasejs/ui/2.0.0/images/auth/google.svg" alt="Google">
+            Sign in with Google
+          </button>
+          
+          <div class="divider">
+            <span>OR</span>
+          </div>
+          
+          <form>
+            <div class="form-group">
+              <label for="signupEmail">Email</label>
+              <input type="email" id="signupEmail" required>
+            </div>
+            
+            <div class="form-group">
+              <label for="screenName">Screen Name</label>
+              <input type="text" id="screenName" required>
+              <p class="helper-text">Public and cannot be changed later.</p>
+              <p class="url-text">Your URL: https://openlibrary.org/people/<span id="urlPreview">screenname</span></p>
+            </div>
+            
+            <div class="form-group">
+              <label for="signupPassword">Password</label>
+              <div class="password-input">
+                <input type="password" id="signupPassword" required>
+                <button type="button" class="toggle-password">
+                  <i class="fa fa-eye"></i>
+                </button>
+              </div>
+            </div>
+            
+            <div class="form-group checkbox-group">
+              <label>
+                <input type="checkbox" id="newsletter">
+                <span>I want to receive news, announcements, and resources from the Internet Archive, the non-profit that runs Open Library.</span>
+              </label>
+              <label>
+                <input type="checkbox" id="disability">
+                <span>I want to apply for special print disability access through a qualifying program.</span>
+              </label>
+            </div>
+            
+            <button type="submit" class="submit-btn">Sign Up with Email</button>
+          </form>
+          
+          <p class="switch-form">Already have an account? <a href="#" id="showLogin">Log In</a></p>
+        </div>
+
+        <!-- Login Form -->
+        <div id="loginForm" class="auth-form">
+          <button class="google-btn">
+            <img src="https://www.gstatic.com/firebasejs/ui/2.0.0/images/auth/google.svg" alt="Google">
+            Sign in with Google
+          </button>
+          
+          <div class="divider">
+            <span>OR</span>
+          </div>
+          
+          <form>
+            <div class="form-group">
+              <label for="loginEmail">Email</label>
+              <input type="email" id="loginEmail" required>
+            </div>
+            
+            <div class="form-group">
+              <label for="loginPassword">Password</label>
+              <div class="password-input">
+                <input type="password" id="loginPassword" required>
+                <button type="button" class="toggle-password">
+                  <i class="fa fa-eye"></i>
+                </button>
+              </div>
+            </div>
+            
+            <button type="submit" class="submit-btn">Log In</button>
+            <a href="#" class="forgot-password">Forgot Password?</a>
+          </form>
+          
+          <p class="switch-form">Don't have an account? <a href="#" id="showSignup">Sign Up</a></p>
+        </div>
+      </div>
+    </div>
+  </div>
+
+
+
+
+
+
+  <!-- Main -->
+    <main>
+          
+<!-- 
+        <section class="banner_container" id="home">
+          <img src="assets/images/banner1.png" class="banner_image active" alt="Banner 1">
+          <img src="assets/images/banner2.png" class="banner_image" alt="Banner 2">
+          <img src="assets/images/banner3.png" class="banner_image" alt="Banner 3">
+          
+          <button class="carousel-btn prev" onclick="previousBanner()">
+              <i class="fas fa-chevron-left"></i>
+          </button>
+          <button class="carousel-btn next" onclick="nextBanner()">
+              <i class="fas fa-chevron-right"></i>
+          </button>
+      </section> -->
+      <!-- OLD BANNER START - commented out -->
+    <!-- ... old banner code ... -->
+    <!-- OLD BANNER END -->
+
+    <!-- NEW HERO BANNER -->
+    <section class="hero">
+      <button class="hero-nav prev" aria-label="Previous">‹</button>
+      <div class="hero-track">
+  <!-- Slide 1 -->
+  <article class="hero-slide active" data-book-id="atomic-habits">
+          <div class="hero-content">
+            <h1 class="hero-kicker">Editor's Pick</h1>
+            <h2 class="hero-title">Atomic Habits</h2>
+            <p class="hero-sub">Tiny changes, remarkable results.</p>
+            <div class="hero-cta">
+              <a href="#read-atomic" class="btn primary">Read</a>
+              <button class="btn ghost" data-id="atomic-habits">Add to Library</button>
+            </div>
+          </div>
+          <div class="hero-cover">
+            <img src="assets/images/img1.webp" alt="Atomic Habits cover">
+          </div>
+        </article>
+
+  <!-- Slide 2 -->
+  <article class="hero-slide" data-book-id="subtle-art">
+          <div class="hero-content ">
+            <h1 class="hero-kicker">Trending Now</h1>
+            <h2 class="hero-title">The Subtle Art of Not Giving a F*ck</h2>
+            <p class="hero-sub">Prioritize what truly matters.</p>
+            <div class="hero-cta">
+              <a href="#read-subtle" class="btn primary">Read</a>
+              <button class="btn ghost " data-id="subtle-art">Add to Library</button>
+            </div>
+          </div>
+          <div class="hero-cover">
+            <img src="assets/images/img2.jpg" alt="Subtle Art cover">
+          </div>
+        </article>
+
+  <!-- Slide 3 -->
+  <article class="hero-slide" data-book-id="subconscious-mind">
+          <div class="hero-content ">
+            <h1 class="hero-kicker">Staff Choice</h1>
+            <h2 class="hero-title">The Power of Your Subconscious Mind</h2>
+            <p class="hero-sub">Harness your inner potential.</p>
+            <div class="hero-cta">
+              <a href="#read-subconscious" class="btn primary">Read</a>
+              <button class="btn ghost " data-id="subconscious-mind">Add to Library</button>
+            </div>
+          </div>
+          <div class="hero-cover">
+            <img src="assets/images/img3.jpg" alt="Subconscious Mind cover">
+          </div>
+        </article>
+      </div>
+      <button class="hero-nav next" aria-label="Next">›</button>
+      <div class="hero-dots" aria-label="Pagination"></div>
+    </section>
+    <!-- NEW HERO BANNER END -->
+
+    <!-- Your existing TRENDING BOOKS section starts below -->
+    <div class="category_heading">
+
+
+
+          <!-- ------------------------------------------------------------------------------- -->
+            <div class="category_heading" >
+            <h3><a href="" style="text-decoration: none;  color: blue; padding-bottom: 2px;" >Trending Books</a></h3>
+          </div>
+        <div class="category_items"  id="category_items">
+            <!-- book here -->
+           
+
+         
+            <div class="book-card">
+              <a href="#"><img src="assets/images/img1.webp" alt="Atomic Habits" class="trending-books"></a>
+              <!-- about book -->
+              <!-- <div class="book-description">
+                <p><strong>Title:</strong> Atomic Habits</p>
+                <p><strong>Author:</strong> James Clear</p>
+                <p><strong>Description:</strong> A practical guide to building good habits and breaking bad ones.</p>
+                <p><strong>Rating:</strong> ★★★★★ (4.8)</p>
+               
+              </div> -->
+              <button class="read-btn">Read</button>
+              <button class="add-library-btn">Add to Library</button>
+            </div>
+
+
+              <div class="book-card">
+              <a href="#"><img src="assets/images/img2.jpg" alt="Atomic Habits" class="trending-books"></a>
+              <!-- about book -->
+              <!-- <div class="book-description">
+                <p><strong>Title:</strong> The Subtle Art of Not Giving a F*ck</p>
+                <p><strong>Author:</strong> Mark Manson</p>
+                <p><strong>Description:</strong> A counterintuitive self-help guide that advocates embracing life’s struggles and prioritizing what truly matters.</p>
+                <p><strong>Rating:</strong> ★★★★☆ (4.4)</p>
+
+              </div> -->
+              <button class="read-btn">Read</button>
+              <button class="add-library-btn">Add to Library</button>
+            </div>
+
+
+
+            <div class="book-card">
+              <a href="#"><img src="assets/images/img3.jpg" alt="Atomic Habits" class="trending-books"></a>
+              <!-- about book -->
+              <!-- <div class="book-description">
+                <p><strong>Title:</strong> The Power of Your Subconscious Mind</p>
+                <p><strong>Author:</strong> Joseph Murphy</p>
+                <p><strong>Description:</strong> Explores how to harness the subconscious mind’s power to achieve success, health, and happiness.</p>
+                <p><strong>Rating:</strong> ★★★★☆ (4.3)</p>
+
+
+              </div> -->
+              <button class="read-btn">Read</button>
+              <button class="add-library-btn">Add to Library</button>
+            </div>
+
+
+
+
+            <div class="book-card">
+              <a href="#"><img src="assets/images/img4.webp" alt="Atomic Habits" class="trending-books"></a>
+              <!-- about book -->
+              <!-- <div class="book-description">
+                <p><strong>Title:</strong> You Are Worth Taking Care Of</p>
+                <p><strong>Author:</strong> Unknown</p>
+                <p><strong>Description:</strong> Encourages prioritizing self-love, care, and mental well-being for a balanced, fulfilling life.</p>
+                <p><strong>Rating:</strong> ★★★★☆ (4.2)</p>
+
+ 
+              </div> -->
+              <button class="read-btn">Read</button>
+              <button class="add-library-btn">Add to Library</button>
+            </div>
+
+
+
+            
+            <div class="book-card">
+              <a href="#"><img src="assets/images/img5.jpeg" alt="Atomic Habits" class="trending-books"></a>
+              <!-- about book -->
+              <!-- <div class="book-description">
+               <p><strong>Title:</strong> The Power of Pivoting</p>
+              <p><strong>Author:</strong> Unknown</p>
+              <p><strong>Description:</strong> Discusses the importance of adaptability and changing directions in career and life to thrive.</p>
+              <p><strong>Rating:</strong> ★★★★☆ (4.0)</p>
+
+
+              </div> -->
+              <button class="read-btn">Read</button>
+              <button class="add-library-btn">Add to Library</button>
+            </div>
+
+
+       
+
+
+            
+
+
+
+
+                
+            
+ 
+           </div> 
+
+
+<!-- --------------------------------------------------------------------------------------------------------------- -->
+           <!-- Heading -->
+          <div class="category_heading" >
+            <h3><a href="" style="text-decoration: none;  color: blue; padding-bottom: 2px;" >Self Help</a></h3>
+          </div>
+        <div class="category_items"  id="category_items">
+            <!-- book here -->
+           
+
+         
+            <div class="book-card">
+              <a href="#"><img src="assets/images/img1.webp" alt="Atomic Habits" class="trending-books"></a>
+              <!-- about book -->
+              <!-- <div class="book-description">
+                <p><strong>Title:</strong> Atomic Habits</p>
+                <p><strong>Author:</strong> James Clear</p>
+                <p><strong>Description:</strong> A practical guide to building good habits and breaking bad ones.</p>
+                <p><strong>Rating:</strong> ★★★★★ (4.8)</p>
+               
+              </div> -->
+              <button class="read-btn">Read</button>
+              <button class="add-library-btn">Add to Library</button>
+            </div>
+
+
+              <div class="book-card">
+              <a href="#"><img src="assets/images/img2.jpg" alt="Atomic Habits" class="trending-books"></a>
+              <!-- about book -->
+              <!-- <div class="book-description">
+                <p><strong>Title:</strong> The Subtle Art of Not Giving a F*ck</p>
+                <p><strong>Author:</strong> Mark Manson</p>
+                <p><strong>Description:</strong> A counterintuitive self-help guide that advocates embracing life’s struggles and prioritizing what truly matters.</p>
+                <p><strong>Rating:</strong> ★★★★☆ (4.4)</p>
+
+              </div> -->
+              <button class="read-btn">Read</button>
+              <button class="add-library-btn">Add to Library</button>
+            </div>
+
+
+
+            <div class="book-card">
+              <a href="#"><img src="assets/images/img3.jpg" alt="Atomic Habits" class="trending-books"></a>
+              <!-- about book -->
+              <!-- <div class="book-description">
+                <p><strong>Title:</strong> The Power of Your Subconscious Mind</p>
+                <p><strong>Author:</strong> Joseph Murphy</p>
+                <p><strong>Description:</strong> Explores how to harness the subconscious mind’s power to achieve success, health, and happiness.</p>
+                <p><strong>Rating:</strong> ★★★★☆ (4.3)</p>
+
+
+              </div> -->
+              <button class="read-btn">Read</button>
+              <button class="add-library-btn">Add to Library</button>
+            </div>
+
+
+
+
+            <div class="book-card">
+              <a href="#"><img src="assets/images/img4.webp" alt="Atomic Habits" class="trending-books"></a>
+              <!-- about book -->
+              <!-- <div class="book-description">
+                <p><strong>Title:</strong> You Are Worth Taking Care Of</p>
+                <p><strong>Author:</strong> Unknown</p>
+                <p><strong>Description:</strong> Encourages prioritizing self-love, care, and mental well-being for a balanced, fulfilling life.</p>
+                <p><strong>Rating:</strong> ★★★★☆ (4.2)</p>
+
+ 
+              </div> -->
+              <button class="read-btn">Read</button>
+              <button class="add-library-btn">Add to Library</button>
+            </div>
+
+
+
+            
+            <div class="book-card">
+              <a href="#"><img src="assets/images/img5.jpeg" alt="Atomic Habits" class="trending-books"></a>
+              <!-- about book -->
+              <div class="book-description">
+               <p><strong>Title:</strong> The Power of Pivoting</p>
+              <p><strong>Author:</strong> Unknown</p>
+              <!-- <p><strong>Description:</strong> Discusses the importance of adaptability and changing directions in career and life to thrive.</p> -->
+              <p><strong>Rating:</strong> ★★★★☆ (4.0)</p>
+
+
+              </div>
+              <button class="read-btn">Read</button>
+              <button class="add-library-btn">Add to Library</button>
+            </div>
+
+
+            
+            
+            <div class="book-card">
+              <a href="#"><img src="assets/images/img6.jpg" alt="Atomic Habits" class="trending-books"></a>
+              <!-- about book -->
+              <div class="book-description">
+               <p><strong>Title:</strong> The Rebirth of You</p>
+              <p><strong>Author:</strong> Tracey J. May Weatherford</p>
+              <p><strong>Description:</strong> Inspirational guide for personal transformation and rediscovering your purpose and identity.</p>
+              <p><strong>Rating:</strong> ★★★★☆ (4.1)</p>
+
+              
+              </div>
+              <button class="read-btn">Read</button>
+              <button class="add-library-btn">Add to Library</button>
+            </div>
+
+
+
+               <div class="book-card">
+              <a href="#"><img src="assets/images/img7.jpg" alt="Atomic Habits" class="trending-books"></a>
+              <!-- about book -->
+              <div class="book-description">
+                <p><strong>Title:</strong> The 7 Habits of Highly Effective People</p>
+                <p><strong>Author:</strong> Stephen R. Covey</p>
+                <p><strong>Description:</strong> Comprehensive framework for personal and professional effectiveness through principle-centered living.</p>
+                <p><strong>Rating:</strong> ★★★★★ (4.7)</p>
+
+               
+              </div>
+              <button class="read-btn">Read</button>
+              <button class="add-library-btn">Add to Library</button>
+            </div>
+
+            
+               <div class="book-card">
+              <a href="#"><img src="assets/images/img8.jpg" alt="Atomic Habits" class="trending-books"></a>
+              <!-- about book -->
+              <div class="book-description">
+                <p><strong>Title:</strong> You Know Best</p>
+                <p><strong>Author:</strong> Unknown</p>
+                <p><strong>Description:</strong> A motivational read about building confidence and trusting your intuition for decision-making.</p>
+                <p><strong>Rating:</strong> ★★★★☆ (4.0)</p>
+
+
+               
+              </div>
+              <button class="read-btn">Read</button>
+              <button class="add-library-btn">Add to Library</button>
+            </div>
+
+
+
+            
+               <div class="book-card">
+              <a href="#"><img src="assets/images/img9.webp" alt="Atomic Habits" class="trending-books"></a>
+              <!-- about book -->
+              <div class="book-description">
+                <p><strong>Title:</strong> The 7 Habits of Highly Effective People</p>
+                <p><strong>Author:</strong> Stephen R. Covey</p>
+                <p><strong>Description:</strong> Comprehensive framework for personal and professional effectiveness through    principle-centered living.</p>
+                <p><strong>Rating:</strong> ★★★★★ (4.7)</p>
+
+               
+              </div>
+              <button class="read-btn">Read</button>
+              <button class="add-library-btn">Add to Library</button>
+            </div>
+
+
+
+                
+               <div class="book-card">
+              <a href="#"><img src="assets/images/img10.jpg" alt="Atomic Habits" class="trending-books"></a>
+              <!-- about book -->
+              <div class="book-description"><p><strong>Title:</strong> The Rebirth of You</p>
+              <p><strong>Title:</strong> Man’s Search for Meaning</p>
+              <p><strong>Author:</strong> Viktor E. Frankl</p>
+              <p><strong>Description:</strong> A profound memoir and psychological exploration of finding purpose amidst suffering and adversity.</p>
+              <p><strong>Rating:</strong> ★★★★★ (4.8)</p>
+
+               
+              </div>
+              <button class="read-btn">Read</button>
+              <button class="add-library-btn">Add to Library</button>
+            </div>
+ 
+           </div> 
+
+
+
+
+
+
+
+
+
+           <!-- Second part------------------------------------------------ -->
+
+            <div class="category_heading" >
+            <h3><a href="" style="text-decoration: none;  color: blue; padding-bottom: 2px;" >Self Help</a></h3>
+          </div>
+        <div class="category_items"  id="category_items">
+            <!-- book here -->
+           
+
+         
+            <div class="book-card">
+              <a href="#"><img src="assets/images/img1.webp" alt="Atomic Habits" class="trending-books"></a>
+              <!-- about book -->
+              <div class="book-description">
+                <p><strong>Title:</strong> Atomic Habits</p>
+                <p><strong>Author:</strong> James Clear</p>
+                <p><strong>Description:</strong> A practical guide to building good habits and breaking bad ones.</p>
+                <p><strong>Rating:</strong> ★★★★★ (4.8)</p>
+               
+              </div>
+              <button class="read-btn">Read</button>
+              <button class="add-library-btn">Add to Library</button>
+            </div>
+
+
+              <div class="book-card">
+              <a href="#"><img src="assets/images/img2.jpg" alt="Atomic Habits" class="trending-books"></a>
+              <!-- about book -->
+              <div class="book-description">
+                <p><strong>Title:</strong> The Subtle Art of Not Giving a F*ck</p>
+                <p><strong>Author:</strong> Mark Manson</p>
+                <p><strong>Description:</strong> A counterintuitive self-help guide that advocates embracing life’s struggles and prioritizing what truly matters.</p>
+                <p><strong>Rating:</strong> ★★★★☆ (4.4)</p>
+
+              </div>
+              <button class="read-btn">Read</button>
+              <button class="add-library-btn">Add to Library</button>
+            </div>
+
+
+
+            <div class="book-card">
+              <a href="#"><img src="assets/images/img3.jpg" alt="Atomic Habits" class="trending-books"></a>
+              <!-- about book -->
+              <div class="book-description">
+                <p><strong>Title:</strong> The Power of Your Subconscious Mind</p>
+                <p><strong>Author:</strong> Joseph Murphy</p>
+                <p><strong>Description:</strong> Explores how to harness the subconscious mind’s power to achieve success, health, and happiness.</p>
+                <p><strong>Rating:</strong> ★★★★☆ (4.3)</p>
+
+
+              </div>
+              <button class="read-btn">Read</button>
+              <button class="add-library-btn">Add to Library</button>
+            </div>
+
+
+
+
+            <div class="book-card">
+              <a href="#"><img src="assets/images/img4.webp" alt="Atomic Habits" class="trending-books"></a>
+              <!-- about book -->
+              <div class="book-description">
+                <p><strong>Title:</strong> You Are Worth Taking Care Of</p>
+                <p><strong>Author:</strong> Unknown</p>
+                <p><strong>Description:</strong> Encourages prioritizing self-love, care, and mental well-being for a balanced, fulfilling life.</p>
+                <p><strong>Rating:</strong> ★★★★☆ (4.2)</p>
+
+ 
+              </div>
+              <button class="read-btn">Read</button>
+              <button class="add-library-btn">Add to Library</button>
+            </div>
+
+
+
+            
+            <div class="book-card">
+              <a href="#"><img src="assets/images/img5.jpeg" alt="Atomic Habits" class="trending-books"></a>
+              <!-- about book -->
+              <div class="book-description">
+               <p><strong>Title:</strong> The Power of Pivoting</p>
+              <p><strong>Author:</strong> Unknown</p>
+              <p><strong>Description:</strong> Discusses the importance of adaptability and changing directions in career and life to thrive.</p>
+              <p><strong>Rating:</strong> ★★★★☆ (4.0)</p>
+
+
+              </div>
+              <button class="read-btn">Read</button>
+              <button class="add-library-btn">Add to Library</button>
+            </div>
+
+
+            
+            
+            <div class="book-card">
+              <a href="#"><img src="assets/images/img6.jpg" alt="Atomic Habits" class="trending-books"></a>
+              <!-- about book -->
+              <div class="book-description">
+               <p><strong>Title:</strong> The Rebirth of You</p>
+              <p><strong>Author:</strong> Tracey J. May Weatherford</p>
+              <p><strong>Description:</strong> Inspirational guide for personal transformation and rediscovering your purpose and identity.</p>
+              <p><strong>Rating:</strong> ★★★★☆ (4.1)</p>
+
+              
+              </div>
+              <button class="read-btn">Read</button>
+              <button class="add-library-btn">Add to Library</button>
+            </div>
+
+
+
+               <div class="book-card">
+              <a href="#"><img src="assets/images/img7.jpg" alt="Atomic Habits" class="trending-books"></a>
+              <!-- about book -->
+              <div class="book-description">
+                <p><strong>Title:</strong> The 7 Habits of Highly Effective People</p>
+                <p><strong>Author:</strong> Stephen R. Covey</p>
+                <p><strong>Description:</strong> Comprehensive framework for personal and professional effectiveness through principle-centered living.</p>
+                <p><strong>Rating:</strong> ★★★★★ (4.7)</p>
+
+               
+              </div>
+              <button class="read-btn">Read</button>
+              <button class="add-library-btn">Add to Library</button>
+            </div>
+
+            
+               <div class="book-card">
+              <a href="#"><img src="assets/images/img8.jpg" alt="Atomic Habits" class="trending-books"></a>
+              <!-- about book -->
+              <div class="book-description">
+                <p><strong>Title:</strong> You Know Best</p>
+                <p><strong>Author:</strong> Unknown</p>
+                <p><strong>Description:</strong> A motivational read about building confidence and trusting your intuition for decision-making.</p>
+                <p><strong>Rating:</strong> ★★★★☆ (4.0)</p>
+
+
+               
+              </div>
+              <button class="read-btn">Read</button>
+              <button class="add-library-btn">Add to Library</button>
+            </div>
+
+
+
+            
+               <div class="book-card">
+              <a href="#"><img src="assets/images/img9.webp" alt="Atomic Habits" class="trending-books"></a>
+              <!-- about book -->
+              <div class="book-description">
+                <p><strong>Title:</strong> The 7 Habits of Highly Effective People</p>
+                <p><strong>Author:</strong> Stephen R. Covey</p>
+                <p><strong>Description:</strong> Comprehensive framework for personal and professional effectiveness through    principle-centered living.</p>
+                <p><strong>Rating:</strong> ★★★★★ (4.7)</p>
+
+               
+              </div>
+              <button class="read-btn">Read</button>
+              <button class="add-library-btn">Add to Library</button>
+            </div>
+
+
+
+                
+               <div class="book-card">
+              <a href="#"><img src="assets/images/img10.jpg" alt="Atomic Habits" class="trending-books"></a>
+              <!-- about book -->
+              <div class="book-description"><p><strong>Title:</strong> The Rebirth of You</p>
+              <p><strong>Title:</strong> Man’s Search for Meaning</p>
+              <p><strong>Author:</strong> Viktor E. Frankl</p>
+              <p><strong>Description:</strong> A profound memoir and psychological exploration of finding purpose amidst suffering and adversity.</p>
+              <p><strong>Rating:</strong> ★★★★★ (4.8)</p>
+
+               
+              </div>
+              <button class="read-btn">Read</button>
+              <button class="add-library-btn">Add to Library</button>
+            </div>
+ 
+           </div> 
+
+
+ 
+                    
+       
+            
+
+
+    </main>
+
+
+    <footer class="site-footer">
+  <div class="footer-container">
+    <div class="footer-about">
+      <!-- <h3>YourSiteName</h3> -->
+      <p>Online E-book reading platform to discover, read and enjoy your favorite books anytime, anywhere.</p>
+    </div>
+    <div class="footer-nav">
+      <h4>Quick Links</h4>
+      <ul>
+        <li><a href="#">Home</a></li>
+        <li><a href="#">Categories</a></li>
+        <li><a href="#">My Books</a></li>
+        <li><a href="#">Sign In</a></li>
+        <li><a href="#">Sign Up</a></li>
+
+    </div>
+    <div class="footer-contact">
+      <h4>Contact Us</h4>
+      <p>Email : contact@gmail.com</p>
+      <p>Phone: +91 ********</p>
+    </div>
+    <div class="footer-social">
+      <h4>Follow Us</h4>
+      <div class="social-icons">
+        <a href="#" aria-label="Facebook"><i class='bx bxl-facebook'></i></a>
+        <a href="#" aria-label="Twitter"><i class='bx bxl-twitter'></i></a>
+        <a href="#" aria-label="Instagram"><i class='bx bxl-instagram'></i></a>
+        <a href="#" aria-label="LinkedIn"><i class='bx bxl-linkedin'></i></a>
+      </div>
+    </div>
+  </div>
+  <div class="footer-bottom">
+    <p>© 2025 xxx.com All rights reserved.</p>
+  </div>
+</footer>
+
+
+
+<!-- Login Modal -->
+
+
+
+  <script src="./js/hero.js"></script>
+  <script src="./js/main.js"></script>
+  <script src="./js/search.js"></script>
+  
+</body>
+
+</html>
