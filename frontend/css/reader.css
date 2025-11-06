@@ -1,0 +1,181 @@
+/* Reader page styles */
+.reader-container {
+    display: flex;
+    flex-direction: column;
+    height: 100vh;
+    background: #1a1a1a;
+}
+
+.reader-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 15px 30px;
+    background: #222;
+    border-bottom: 1px solid #333;
+    z-index: 100;
+}
+
+.book-title {
+    font-size: 18px;
+    font-weight: 600;
+    color: #fff;
+}
+
+.reader-controls {
+    display: flex;
+    gap: 10px;
+    align-items: center;
+}
+
+.reader-content {
+    flex: 1;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    overflow: hidden;
+    background: #0a0a0a;
+    position: relative;
+}
+
+#pdfViewer {
+    width: 100%;
+    height: 100%;
+    border: none;
+}
+
+.control-btn {
+    padding: 8px 15px;
+    background: #333;
+    color: white;
+    border: none;
+    border-radius: 5px;
+    cursor: pointer;
+    font-size: 14px;
+    transition: background-color 0.3s;
+    display: flex;
+    align-items: center;
+    gap: 5px;
+}
+
+.control-btn:hover {
+    background: #444;
+}
+
+.control-btn i {
+    font-size: 16px;
+}
+
+.zoom-controls {
+    position: absolute;
+    right: 20px;
+    top: 50%;
+    transform: translateY(-50%);
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+    background: rgba(0,0,0,0.7);
+    padding: 10px;
+    border-radius: 5px;
+}
+
+.zoom-btn {
+    width: 40px;
+    height: 40px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    background: #333;
+    border: none;
+    border-radius: 5px;
+    color: white;
+    cursor: pointer;
+    transition: background-color 0.3s;
+}
+
+.zoom-btn:hover {
+    background: #444;
+}
+
+.loading-overlay {
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background: rgba(0,0,0,0.8);
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    z-index: 1000;
+}
+
+.loading-spinner {
+    width: 50px;
+    height: 50px;
+    border: 5px solid #f3f3f3;
+    border-top: 5px solid #3498db;
+    border-radius: 50%;
+    animation: spin 1s linear infinite;
+}
+
+@keyframes spin {
+    0% { transform: rotate(0deg); }
+    100% { transform: rotate(360deg); }
+}
+
+/* Mobile styles */
+@media (max-width: 768px) {
+    .reader-header {
+        padding: 10px;
+    }
+
+    .book-title {
+        font-size: 16px;
+        max-width: 200px;
+        white-space: nowrap;
+        overflow: hidden;
+        text-overflow: ellipsis;
+    }
+
+    .reader-controls {
+        gap: 5px;
+    }
+
+    .control-btn span {
+        display: none;
+    }
+
+    .zoom-controls {
+        right: 10px;
+    }
+}
+
+/* Notification styles */
+.notification {
+    position: fixed;
+    bottom: 20px;
+    right: 20px;
+    padding: 15px 25px;
+    border-radius: 5px;
+    background: #4CAF50;
+    color: white;
+    font-size: 14px;
+    z-index: 1000;
+    animation: slideIn 0.3s ease-out;
+}
+
+.notification.error {
+    background: #f44336;
+}
+
+@keyframes slideIn {
+    from {
+        transform: translateX(100%);
+        opacity: 0;
+    }
+    to {
+        transform: translateX(0);
+        opacity: 1;
+    }
+}
