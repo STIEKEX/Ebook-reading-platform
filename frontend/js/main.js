@@ -15,15 +15,31 @@ document.addEventListener('DOMContentLoaded', async () => {
     const loginArea = document.querySelector('.login');
     if (loginArea) {
       if (user) {
-        const displayName = user.username || user.name || user.screenName || (user.email && user.email.split('@')[0]) || 'User';
+        // Fetch full user profile to get avatar
+        let profile = null;
+        try {
+          profile = await getProfile();
+        } catch (err) {
+          console.error('Error fetching profile:', err);
+        }
+        
+        const displayName = profile?.profile?.name || user.username || user.name || user.screenName || (user.email && user.email.split('@')[0]) || 'User';
         const initial = (displayName && displayName[0]) ? displayName[0].toUpperCase() : 'U';
+        
+        // Check if user has profile picture
+        let avatarContent = initial;
+        if (profile?.profile?.avatar) {
+          avatarContent = `<img src="http://localhost:5000${profile.profile.avatar}" alt="${displayName}" style="width: 100%; height: 100%; border-radius: 50%; object-fit: cover;">`;
+        }
+        
         // Avatar button + dropdown inside header
         loginArea.innerHTML = `
           <div class="nav-user-inline">
-            <button class="nav-user-avatar" id="navUserAvatar" aria-expanded="false" title="${displayName}">${initial}</button>
+            <button class="nav-user-avatar" id="navUserAvatar" aria-expanded="false" title="${displayName}">${avatarContent}</button>
             <div class="nav-user-dropdown" id="navUserDropdown" role="menu" aria-hidden="true">
               <a href='./pages/profile.html' id='navProfile'><i class="fa fa-user"></i> My Profile</a>
               <a href='./pages/my-library.html' id='navMyLibrary'><i class="fa fa-book"></i> My Library</a>
+              <a href='#' id='navSettings'><i class="fa fa-cog"></i> Settings</a>
               <a href='#' id='navLogout'><i class="fa fa-sign-out-alt"></i> Logout</a>
             </div>
           </div>
@@ -64,9 +80,11 @@ document.addEventListener('DOMContentLoaded', async () => {
         // Wire dropdown links
         const myLib = document.getElementById('navMyLibrary');
         const prof = document.getElementById('navProfile');
+        const settings = document.getElementById('navSettings');
         const logoutNav = document.getElementById('navLogout');
         if (myLib) myLib.addEventListener('click', () => { window.location.href = './pages/my-library.html'; });
         if (prof) prof.addEventListener('click', () => { window.location.href = './pages/profile.html'; });
+        if (settings) settings.addEventListener('click', (ev) => { ev.preventDefault(); openSettingsModal(); });
         if (logoutNav) logoutNav.addEventListener('click', (ev) => { ev.preventDefault(); logout(); });
       } else {
         // Not logged in: leave existing Sign In / Sign Up buttons as rendered in HTML
@@ -102,16 +120,27 @@ function displayBooks(books) {
     return;
   }
 
-  booksContainer.innerHTML = books.map(book => `
-    <div class="book-card" onclick="openBook('${book._id}')" style="cursor: pointer;">
-      <img src="${book.coverImage}" alt="${book.title}" class="book-cover" style="width: 100%; height: 200px; object-fit: cover;"/>
+  booksContainer.innerHTML = books.map(book => {
+    // Handle cover URL - support both legacy and GridFS
+    let coverUrl = '';
+    if (book.coverFileId) {
+      coverUrl = `${API_BASE}/books/file/${book.coverFileId}`;
+    } else if (book.coverImage) {
+      coverUrl = book.coverImage.startsWith('http') ? book.coverImage : `http://localhost:5000${book.coverImage}`;
+    }
+    
+    return `
+    <div class="book-card" data-id="${book._id}" data-cover="${coverUrl}" style="cursor: pointer;">
+      <img src="${coverUrl}" alt="${book.title}" class="book-cover" style="width: 100%; height: 200px; object-fit: cover;" data-book-id="${book._id}" onclick="openBook('${book._id}')"/>
       <div class="book-info" style="padding: 10px;">
         <div class="book-title" style="font-weight: bold;">${book.title}</div>
         <div class="book-author" style="color: #aaa;">by ${book.author}</div>
         <div style="color: #FFD700; font-size: 12px;">⭐ ${book.averageRating.toFixed(1)} (${book.totalReviews} reviews)</div>
+        <div class="book-actions"></div>
       </div>
     </div>
-  `).join('');
+  `;
+  }).join('');
 }
 
 function openBook(bookId) {

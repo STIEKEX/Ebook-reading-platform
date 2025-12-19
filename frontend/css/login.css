@@ -76,12 +76,12 @@ body {
 
 /* Sign Up Background - book-reading-login-page.jpg */
 .signup-bg {
-    background-image: url('/frontend/assets/Login-background/book\ reading\ \(login\ page\).avif');
+    background-image: url('../assets/Login-background/book\ reading\ \(login\ page\).avif');
 }
 
 /* Login Background - gaman-alice-ZpnVeCKf6KM-unsplash.jpg */
 .login-bg {
-    background-image: url('/frontend/assets/Login-background/gaman-alice-ZpnVeCKf6KM-unsplash.jpg');
+    background-image: url('../assets/Login-background/gaman-alice-ZpnVeCKf6KM-unsplash.jpg');
 }
 
 /* Dark overlay to make text readable */

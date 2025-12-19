@@ -14,11 +14,18 @@ document.addEventListener('DOMContentLoaded', function() {
     const loginPasswordInput = document.getElementById('loginPassword');
     const signupForm = document.getElementById('signupForm');
     const loginForm = document.getElementById('loginForm');
+    const signupSubmitBtn = signupForm?.querySelector('button[type="submit"]');
+    const loginSubmitBtn = loginForm?.querySelector('button[type="submit"]');
     
     // Handle signup form submission
     signupForm.addEventListener('submit', async function(e) {
         e.preventDefault();
         console.log('Signup form submitted');
+        if (signupSubmitBtn) {
+            signupSubmitBtn.disabled = true;
+            signupSubmitBtn.dataset.origText = signupSubmitBtn.textContent;
+            signupSubmitBtn.textContent = 'Signing up...';
+        }
 
         const formData = {
             username: document.getElementById('screenName').value,
@@ -46,15 +53,19 @@ document.addEventListener('DOMContentLoaded', function() {
                 localStorage.setItem('token', data.token);
                 localStorage.setItem('user', JSON.stringify(data.user));
 
-                // Compute frontend prefix dynamically so Live Server and backend both work
-                const frontendPrefix = window.location.pathname.startsWith('/frontend') ? '' : '/frontend';
+                // Show success message
+                alert('✅ Signup successful! Redirecting...');
 
                 if (data.user.isAdmin) {
                     console.log('Redirecting to admin dashboard...');
-                    window.location.href = `${frontendPrefix}/admin/dashboard.html`;
+                    // Check if we're on the landing page or login page
+                    const isOnLandingPage = !window.location.pathname.includes('/pages/');
+                    window.location.href = isOnLandingPage ? 'admin/dashboard.html' : '../admin/dashboard.html';
                 } else {
                     console.log('Redirecting to main page...');
-                    window.location.href = `${frontendPrefix}/main.html`;
+                    // Check if we're on the landing page or login page
+                    const isOnLandingPage = !window.location.pathname.includes('/pages/');
+                    window.location.href = isOnLandingPage ? 'main.html' : '../main.html';
                 }
             } else {
                 alert(data.message || 'Signup failed. Please try again.');
@@ -62,6 +73,11 @@ document.addEventListener('DOMContentLoaded', function() {
         } catch (error) {
             console.error('Error during signup:', error);
             alert('An error occurred during signup. Please check the console for details.');
+        } finally {
+            if (signupSubmitBtn) {
+                signupSubmitBtn.disabled = false;
+                signupSubmitBtn.textContent = signupSubmitBtn.dataset.origText || 'Sign Up with Email';
+            }
         }
     });
 
@@ -69,6 +85,12 @@ document.addEventListener('DOMContentLoaded', function() {
     loginForm.addEventListener('submit', async function(e) {
         e.preventDefault();
         console.log('Login form submitted');
+
+        if (loginSubmitBtn) {
+            loginSubmitBtn.disabled = true;
+            loginSubmitBtn.dataset.origText = loginSubmitBtn.textContent;
+            loginSubmitBtn.textContent = 'Logging in...';
+        }
 
         const formData = {
             email: document.getElementById('loginEmail').value,
@@ -94,15 +116,19 @@ document.addEventListener('DOMContentLoaded', function() {
                 localStorage.setItem('token', data.token);
                 localStorage.setItem('user', JSON.stringify(data.user));
 
-                // Compute frontend prefix dynamically so Live Server and backend both work
-                const frontendPrefix = window.location.pathname.startsWith('/frontend') ? '' : '/frontend';
+                // Show success message
+                alert('✅ Login successful! Redirecting...');
 
                 if (data.user.isAdmin) {
                     console.log('Redirecting to admin dashboard...');
-                    window.location.href = `${frontendPrefix}.../admin/dashboard.html`;
+                    // Check if we're on the landing page or login page
+                    const isOnLandingPage = !window.location.pathname.includes('/pages/');
+                    window.location.href = isOnLandingPage ? 'admin/dashboard.html' : '../admin/dashboard.html';
                 } else {
                     console.log('Redirecting to main page...');
-                    window.location.href = `${frontendPrefix}/main.html`;
+                    // Check if we're on the landing page or login page
+                    const isOnLandingPage = !window.location.pathname.includes('/pages/');
+                    window.location.href = isOnLandingPage ? 'main.html' : '../main.html';
                 }
             } else {
                 alert(data.message || 'Login failed. Please try again.');
@@ -110,13 +136,32 @@ document.addEventListener('DOMContentLoaded', function() {
         } catch (error) {
             console.error('Error during login:', error);
             alert('An error occurred during login. Please check the console for details.');
+        } finally {
+            if (loginSubmitBtn) {
+                loginSubmitBtn.disabled = false;
+                loginSubmitBtn.textContent = loginSubmitBtn.dataset.origText || 'Log In';
+            }
         }
     });
 
-    // Close modal (optional - you can remove this if you don't want close functionality)
+    // Close modal
     closeModalBtn.addEventListener('click', function() {
-        if (confirm('Are you sure you want to close?')) {
-            window.close();
+        // Check if we're on the landing page (modal) or login page
+        const isOnLandingPage = !window.location.pathname.includes('/pages/');
+        
+        if (isOnLandingPage) {
+            // On landing page - just hide the modal
+            const modalOverlay = document.getElementById('modalOverlay');
+            if (modalOverlay) {
+                modalOverlay.classList.remove('active');
+            }
+        } else {
+            // On separate login page - go back or close
+            if (window.history.length > 1) {
+                window.history.back();
+            } else {
+                window.location.href = '../index.html';
+            }
         }
     });
 
@@ -157,56 +202,4 @@ document.addEventListener('DOMContentLoaded', function() {
             loginPasswordInput.type = 'password';
         }
     });
-
-    // Signup form submission
-  // EXISTING CODE...
-
-// REPLACE THIS PART in your login.js:
-signupForm.addEventListener('submit', async function(e) {
-  e.preventDefault();
-  
-  const username = document.getElementById('screenName').value;
-  const email = document.getElementById('email').value;
-  const password = document.getElementById('password').value;
-  const adminCode = document.getElementById('adminCode')?.value || '';
-
-  const result = await signup(username, email, password, adminCode);
-  
-  if (result.success) {
-    showMessage(result.message);
-    setTimeout(() => {
-      window.location.href = '../main.html';
-    }, 1500);
-  } else {
-    showErrorMessage(result.message);
-  }
-});
-
-loginForm.addEventListener('submit', async function(e) {
-  e.preventDefault();
-  
-  const email = document.getElementById('loginEmail').value;
-  const password = document.getElementById('loginPassword').value;
-
-  const result = await login(email, password);
-  
-  if (result.success) {
-    showMessage(result.message);
-    setTimeout(() => {
-     window.location.href = '../main.html';  // Go UP one level to reach main.html
-
-    }, 1500);
-  } else {
-    showErrorMessage(result.message);
-  }
-});
-
-function showMessage(msg) {
-  alert(msg);
-}
-
-function showErrorMessage(msg) {
-  alert('❌ Error: ' + msg);
-}
-
 });

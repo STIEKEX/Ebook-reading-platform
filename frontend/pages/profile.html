@@ -3,159 +3,776 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Profile</title>
+  <title>My Profile - Reading Dashboard</title>
   <link rel="stylesheet" href="../css/main.css">
+  <link href='https://unpkg.com/boxicons@2.1.4/css/boxicons.min.css' rel='stylesheet'>
+  <style>
+    body {
+      background: #f7f9fb;
+      font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+    }
+
+    .profile-container {
+      max-width: 1400px;
+      margin: 0 auto;
+      padding: 32px 24px;
+    }
+
+    .profile-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-bottom: 32px;
+      background: #fff;
+      padding: 24px;
+      border-radius: 16px;
+      box-shadow: 0 1px 3px rgba(0,0,0,0.05);
+    }
+
+    .profile-info {
+      display: flex;
+      align-items: center;
+      gap: 20px;
+    }
+
+    .profile-avatar {
+      width: 80px;
+      height: 80px;
+      border-radius: 50%;
+      background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+      color: #fff;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 32px;
+      font-weight: 700;
+    }
+
+    .profile-details h1 {
+      font-size: 24px;
+      font-weight: 700;
+      color: #1a1a1a;
+      margin-bottom: 4px;
+    }
+
+    .profile-details p {
+      color: #6b7280;
+      font-size: 14px;
+    }
+
+    .profile-actions {
+      position: relative;
+      display: flex;
+      align-items: center;
+      gap: 12px;
+    }
+
+    .profile-menu-btn {
+      width: 48px;
+      height: 48px;
+      border-radius: 50%;
+      background: #f59e0b;
+      color: #fff;
+      border: none;
+      font-size: 20px;
+      font-weight: 700;
+      cursor: pointer;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      transition: all 0.2s;
+    }
+
+    .profile-menu-btn:hover {
+      background: #d97706;
+      transform: scale(1.05);
+    }
+
+    .profile-dropdown {
+      position: absolute;
+      top: 60px;
+      right: 0;
+      background: #fff;
+      border-radius: 12px;
+      box-shadow: 0 4px 20px rgba(0,0,0,0.15);
+      min-width: 200px;
+      padding: 8px 0;
+      display: none;
+      z-index: 1000;
+    }
+
+    .profile-dropdown.active {
+      display: block;
+      animation: fadeIn 0.2s ease;
+    }
+
+    @keyframes fadeIn {
+      from {
+        opacity: 0;
+        transform: translateY(-10px);
+      }
+      to {
+        opacity: 1;
+        transform: translateY(0);
+      }
+    }
+
+    .profile-dropdown-item {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      padding: 12px 20px;
+      color: #1a1a1a;
+      text-decoration: none;
+      font-size: 15px;
+      font-weight: 500;
+      cursor: pointer;
+      transition: background 0.2s;
+    }
+
+    .profile-dropdown-item:hover {
+      background: #f9fafb;
+    }
+
+    .profile-dropdown-item i {
+      font-size: 20px;
+    }
+
+    .btn-profile {
+      padding: 10px 20px;
+      border-radius: 12px;
+      font-size: 14px;
+      font-weight: 500;
+      cursor: pointer;
+      border: none;
+      transition: all 0.2s;
+    }
+
+    .btn-primary {
+      background: #22c55e;
+      color: #fff;
+    }
+
+    .btn-primary:hover {
+      background: #16a34a;
+    }
+
+    .btn-secondary {
+      background: #fff;
+      color: #1a1a1a;
+      border: 1px solid #e5e7eb;
+    }
+
+    .btn-secondary:hover {
+      background: #f9fafb;
+    }
+
+    .stats-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+      gap: 20px;
+      margin-bottom: 32px;
+    }
+
+    .stat-card {
+      background: #fff;
+      border-radius: 16px;
+      padding: 24px;
+      box-shadow: 0 1px 3px rgba(0,0,0,0.05);
+      position: relative;
+    }
+
+    .stat-card.green { background: linear-gradient(135deg, #d1fae5 0%, #a7f3d0 100%); }
+    .stat-card.blue { background: linear-gradient(135deg, #dbeafe 0%, #bfdbfe 100%); }
+    .stat-card.pink { background: linear-gradient(135deg, #fce7f3 0%, #fbcfe8 100%); }
+    .stat-card.purple { background: linear-gradient(135deg, #e9d5ff 0%, #d8b4fe 100%); }
+
+    .stat-card .stat-icon {
+      width: 56px;
+      height: 56px;
+      border-radius: 16px;
+      background: #fff;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 28px;
+      margin-bottom: 16px;
+    }
+
+    .stat-card.green .stat-icon { color: #10b981; }
+    .stat-card.blue .stat-icon { color: #3b82f6; }
+    .stat-card.pink .stat-icon { color: #ec4899; }
+    .stat-card.purple .stat-icon { color: #a855f7; }
+
+    .stat-label {
+      font-size: 13px;
+      color: rgba(0,0,0,0.6);
+      margin-bottom: 8px;
+      font-weight: 500;
+    }
+
+    .stat-value {
+      font-size: 32px;
+      font-weight: 700;
+      color: #1a1a1a;
+    }
+
+    .charts-section {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 20px;
+      margin-bottom: 32px;
+    }
+
+    .chart-card {
+      background: #fff;
+      border-radius: 16px;
+      padding: 24px;
+      box-shadow: 0 1px 3px rgba(0,0,0,0.05);
+    }
+
+    .chart-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-bottom: 20px;
+    }
+
+    .chart-header h3 {
+      font-size: 16px;
+      font-weight: 600;
+      color: #1a1a1a;
+    }
+
+    .reading-activity-section {
+      background: #fff;
+      border-radius: 16px;
+      padding: 24px;
+      box-shadow: 0 1px 3px rgba(0,0,0,0.05);
+      margin-bottom: 32px;
+    }
+
+    .section-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-bottom: 20px;
+    }
+
+    .section-header h3 {
+      font-size: 18px;
+      font-weight: 600;
+      color: #1a1a1a;
+    }
+
+    .books-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(160px, 1fr));
+      gap: 20px;
+    }
+
+    .book-card {
+      border-radius: 12px;
+      overflow: hidden;
+      cursor: pointer;
+      transition: transform 0.2s;
+      background: #f9fafb;
+    }
+
+    .book-card:hover {
+      transform: translateY(-4px);
+    }
+
+    .book-cover {
+      width: 100%;
+      aspect-ratio: 2/3;
+      object-fit: cover;
+      background: #e5e7eb;
+    }
+
+    .book-info {
+      padding: 12px;
+    }
+
+    .book-title {
+      font-size: 14px;
+      font-weight: 600;
+      color: #1a1a1a;
+      margin-bottom: 4px;
+      overflow: hidden;
+      text-overflow: ellipsis;
+      white-space: nowrap;
+    }
+
+    .book-author {
+      font-size: 12px;
+      color: #6b7280;
+    }
+
+    .book-progress {
+      margin-top: 8px;
+      height: 4px;
+      background: #e5e7eb;
+      border-radius: 2px;
+      overflow: hidden;
+    }
+
+    .book-progress-bar {
+      height: 100%;
+      background: #22c55e;
+      transition: width 0.3s;
+    }
+
+    /* Activity Heatmap Styles */
+    .activity-heatmap-section {
+      background: #fff;
+      border-radius: 16px;
+      padding: 24px;
+      box-shadow: 0 1px 3px rgba(0,0,0,0.05);
+      margin-bottom: 32px;
+    }
+
+    .heatmap-legend {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      font-size: 12px;
+      color: #6b7280;
+    }
+
+    .legend-colors {
+      display: flex;
+      gap: 3px;
+    }
+
+    .legend-box {
+      width: 12px;
+      height: 12px;
+      border-radius: 2px;
+    }
+
+    .heatmap-container {
+      margin-top: 20px;
+      overflow-x: auto;
+      overflow-y: hidden;
+      padding-bottom: 10px;
+    }
+
+    .heatmap-months {
+      display: flex;
+      justify-content: space-between;
+      font-size: 12px;
+      color: #6b7280;
+      margin-bottom: 8px;
+      margin-left: 40px;
+      min-width: 840px;
+      width: fit-content;
+    }
+
+    .heatmap-months span {
+      flex: 1;
+      text-align: left;
+    }
+
+    .heatmap-days {
+      display: flex;
+      gap: 8px;
+      min-width: 840px;
+      width: fit-content;
+    }
+
+    .day-labels {
+      display: flex;
+      flex-direction: column;
+      gap: 5px;
+      font-size: 11px;
+      color: #6b7280;
+      padding-top: 2px;
+      width: 30px;
+      flex-shrink: 0;
+    }
+
+    .day-labels span {
+      height: 12px;
+      line-height: 12px;
+    }
+
+    .heatmap-grid {
+      display: grid;
+      grid-template-columns: repeat(53, 12px);
+      grid-template-rows: repeat(7, 12px);
+      gap: 3px;
+      grid-auto-flow: column;
+      width: fit-content;
+    }
+
+    .heatmap-cell {
+      width: 12px;
+      height: 12px;
+      border-radius: 2px;
+      background: #ebedf0;
+      cursor: pointer;
+      transition: all 0.2s;
+    }
+
+    .heatmap-cell:hover {
+      transform: scale(1.2);
+      box-shadow: 0 2px 8px rgba(0,0,0,0.15);
+    }
+
+    .heatmap-cell[data-level="0"] { background: #ebedf0; }
+    .heatmap-cell[data-level="1"] { background: #9be9a8; }
+    .heatmap-cell[data-level="2"] { background: #40c463; }
+    .heatmap-cell[data-level="3"] { background: #30a14e; }
+    .heatmap-cell[data-level="4"] { background: #216e39; }
+
+    @media (max-width: 768px) {
+      .profile-header {
+        flex-direction: column;
+        gap: 16px;
+      }
+
+      .charts-section {
+        grid-template-columns: 1fr;
+      }
+
+      .stats-grid {
+        grid-template-columns: 1fr;
+      }
+
+      .heatmap-container {
+        overflow-x: scroll;
+      }
+    }
+  </style>
 </head>
 <body>
-  <div class="page-wrapper">
-    <div class="page-card">
-      <div class="page-header">
-        <div>
-          <div class="page-title">My Profile</div>
-          <div class="muted">Manage your account details</div>
-        </div>
-        <div>
-          <button class="btn brand" onclick="goHome()">← Back</button>
+<body>
+  <div class="profile-container">
+    <!-- Profile Header -->
+    <div class="profile-header">
+      <div class="profile-info">
+        <div class="profile-avatar" id="userAvatar">U</div>
+        <div class="profile-details">
+          <h1 id="userName">Loading...</h1>
+          <p id="userEmail">Loading...</p>
         </div>
       </div>
+      <div class="profile-actions">
+        <button class="btn-profile btn-secondary" onclick="goBack()">
+          <i class='bx bx-arrow-back'></i> Back to Home
+        </button>
+      </div>
+    </div>
 
-      <div id="successMsg" class="muted" style="margin-bottom:12px; display:none;"></div>
+    <!-- Stats Grid -->
+    <div class="stats-grid">
+      <div class="stat-card green">
+        <div class="stat-icon">
+          <i class='bx bx-book-open'></i>
+        </div>
+        <div class="stat-label">Currently Reading</div>
+        <div class="stat-value" id="currentlyReading">0</div>
+      </div>
 
-      <section style="margin-bottom:20px;">
-        <h3 style="margin-bottom:10px;">Account</h3>
-        <div style="display:flex; gap:12px; align-items:center;">
-          <div style="width:64px; height:64px; border-radius:12px; background:#f3f4f6; display:flex; align-items:center; justify-content:center; font-weight:700;">
-            <span id="avatarInitial">T</span>
+      <div class="stat-card blue">
+        <div class="stat-icon">
+          <i class='bx bx-heart'></i>
+        </div>
+        <div class="stat-label">Favorite Books</div>
+        <div class="stat-value" id="favoriteBooks">0</div>
+      </div>
+
+      <div class="stat-card pink">
+        <div class="stat-icon">
+          <i class='bx bx-check-circle'></i>
+        </div>
+        <div class="stat-label">Finished Books</div>
+        <div class="stat-value" id="finishedBooks">0</div>
+      </div>
+
+      <div class="stat-card purple">
+        <div class="stat-icon">
+          <i class='bx bx-bookmark'></i>
+        </div>
+        <div class="stat-label">Total Bookmarks</div>
+        <div class="stat-value" id="totalBookmarks">0</div>
+      </div>
+
+      <div class="stat-card blue">
+        <div class="stat-icon">
+          <i class='bx bx-star'></i>
+        </div>
+        <div class="stat-label">Reviews Written</div>
+        <div class="stat-value" id="reviewsWritten">0</div>
+      </div>
+    </div>
+
+    <!-- Reading Activity Heatmap -->
+    <div class="activity-heatmap-section">
+      <div class="chart-header">
+        <h3>Reading Activity</h3>
+        <div class="heatmap-legend">
+          <span>Less</span>
+          <div class="legend-colors">
+            <div class="legend-box" style="background: #ebedf0;"></div>
+            <div class="legend-box" style="background: #9be9a8;"></div>
+            <div class="legend-box" style="background: #40c463;"></div>
+            <div class="legend-box" style="background: #30a14e;"></div>
+            <div class="legend-box" style="background: #216e39;"></div>
           </div>
-          <div>
-            <div id="userEmail" class="muted">Loading...</div>
-            <div id="userUsername" style="font-weight:700;">Loading...</div>
-            <div id="userType" class="muted">Loading...</div>
+          <span>More</span>
+        </div>
+      </div>
+      <div class="heatmap-container">
+        <div class="heatmap-months">
+          <span>Nov</span>
+          <span>Dec</span>
+          <span>Jan</span>
+          <span>Feb</span>
+          <span>Mar</span>
+          <span>Apr</span>
+          <span>May</span>
+          <span>Jun</span>
+          <span>Jul</span>
+          <span>Aug</span>
+          <span>Sep</span>
+          <span>Oct</span>
+        </div>
+        <div class="heatmap-days">
+          <div class="day-labels">
+            <span>Mon</span>
+            <span>Wed</span>
+            <span>Fri</span>
+          </div>
+          <div class="heatmap-grid" id="activityHeatmap">
+            <!-- Heatmap grid will be generated by JavaScript -->
           </div>
         </div>
-      </section>
+      </div>
+    </div>
 
-      <section style="margin-bottom:18px;">
-        <h4 style="margin-bottom:10px;">Edit Profile</h4>
-        <div class="form-group row">
-          <input id="fullName" placeholder="Full name">
-        </div>
-        <div class="form-group row" style="margin-top:10px;">
-          <input id="avatar" placeholder="Avatar URL">
-        </div>
-  <div style="margin-top:12px;"><button class="btn brand" onclick="handleUpdateProfile()">Save changes</button></div>
-      </section>
+    <!-- Currently Reading Books -->
+    <div class="reading-activity-section">
+      <div class="section-header">
+        <h3>Currently Reading</h3>
+        <a href="../main.html" style="color: #22c55e; font-size: 14px; text-decoration: none;">View all →</a>
+      </div>
+      <div class="books-grid" id="currentlyReadingBooks">
+        <p style="color: #9ca3af; text-align: center; padding: 40px;">Loading your books...</p>
+      </div>
+    </div>
 
-      <section>
-        <h4 style="margin-bottom:10px;">Security</h4>
-        <div class="form-group row">
-          <input type="password" id="oldPassword" placeholder="Current password">
-        </div>
-        <div class="form-group row" style="margin-top:10px;">
-          <input type="password" id="newPassword" placeholder="New password">
-        </div>
-        <div class="form-group row" style="margin-top:10px;">
-          <input type="password" id="confirmPassword" placeholder="Confirm new password">
-        </div>
-  <div style="margin-top:12px;"><button class="btn" onclick="handleChangePassword()">Change password</button></div>
-      </section>
-
-      <section style="margin-top:18px;">
-        <h4 style="margin-bottom:10px; color:#ef4444">Danger zone</h4>
-        <button class="btn" style="background:#fff; color:#ef4444; border:1px solid #fee2e2;" onclick="logoutUser()">Logout</button>
-      </section>
+    <!-- Favorite Books -->
+    <div class="reading-activity-section">
+      <div class="section-header">
+        <h3>My Favorites</h3>
+        <a href="../pages/my-library.html" style="color: #22c55e; font-size: 14px; text-decoration: none;">View all →</a>
+      </div>
+      <div class="books-grid" id="favoriteBooksList">
+        <p style="color: #9ca3af; text-align: center; padding: 40px;">Loading your favorites...</p>
+      </div>
     </div>
   </div>
 
   <script src="../js/api.js"></script>
   <script>
+    let userStats = {
+      currentlyReading: 0,
+      favorites: 0,
+      finished: 0,
+      totalBookmarks: 0,
+      readingProgress: [],
+      categories: {}
+    };
+
     document.addEventListener('DOMContentLoaded', async () => {
+      // Check if user is logged in
       if (!isLoggedIn()) {
         window.location.href = 'login.html';
         return;
       }
 
-      const user = getCurrentUser();
-      const profile = await getProfile();
-
-      document.getElementById('userEmail').textContent = profile.email;
-      document.getElementById('userUsername').textContent = profile.username;
-      document.getElementById('userType').textContent = profile.isAdmin ? 'Admin' : 'User';
-
-      document.getElementById('fullName').value = profile.profile?.name || '';
-      document.getElementById('avatar').value = profile.profile?.avatar || '';
-  // set avatar initial
-  const displayName = profile.profile?.name || profile.username || (profile.email && profile.email.split('@')[0]) || 'U';
-  const initial = displayName[0] ? displayName[0].toUpperCase() : 'U';
-  const avatarElem = document.getElementById('avatarInitial');
-  if (avatarElem) avatarElem.textContent = initial;
+      await loadUserProfile();
+      await loadUserStats();
+      generateActivityHeatmap();
     });
 
-  async function handleUpdateProfile() {
-      const name = document.getElementById('fullName').value;
-      const avatar = document.getElementById('avatar').value;
+    async function loadUserProfile() {
+      try {
+        const user = getCurrentUser();
+        const profile = await getProfile();
 
-      if (!name) {
-        alert('Please enter your name');
-        return;
-      }
-
-      const result = await updateProfile(name, avatar);
-        if (result.message) {
-          showMessage('Profile updated successfully!');
+        // Update profile header
+        const displayName = profile.profile?.name || profile.username || 'User';
+        document.getElementById('userName').textContent = displayName;
+        document.getElementById('userEmail').textContent = profile.email;
+        
+        // Set avatar - use profile picture if available, otherwise use initial
+        const avatarElement = document.getElementById('userAvatar');
+        if (profile.profile?.avatar) {
+          avatarElement.innerHTML = `<img src="http://localhost:5000${profile.profile.avatar}" alt="Profile" style="width: 100%; height: 100%; border-radius: 50%; object-fit: cover;">`;
         } else {
-          alert('Error updating profile');
+          const initial = displayName[0].toUpperCase();
+          avatarElement.textContent = initial;
         }
+      } catch (error) {
+        console.error('Error loading profile:', error);
+      }
     }
 
-  async function handleChangePassword() {
-      const oldPassword = document.getElementById('oldPassword').value;
-      const newPassword = document.getElementById('newPassword').value;
-      const confirmPassword = document.getElementById('confirmPassword').value;
+    async function loadUserStats() {
+      try {
+        // Fetch user's favorites
+        const favorites = await getFavorites();
+        userStats.favorites = favorites.length;
+        document.getElementById('favoriteBooks').textContent = userStats.favorites;
 
-      if (!oldPassword || !newPassword) {
-        alert('Please fill all fields');
-        return;
-      }
-
-      if (newPassword !== confirmPassword) {
-        alert('Passwords do not match');
-        return;
-      }
-
-      if (newPassword.length < 6) {
-        alert('Password must be at least 6 characters');
-        return;
-      }
-
-      const result = await changePassword(oldPassword, newPassword);
-        if (result.message) {
-          showMessage('Password changed successfully!');
-          document.getElementById('oldPassword').value = '';
-          document.getElementById('newPassword').value = '';
-          document.getElementById('confirmPassword').value = '';
+        // Display favorite books
+        if (favorites.length > 0) {
+          displayBooks(favorites.slice(0, 6), 'favoriteBooksList');
         } else {
-          alert('Error: ' + result.message);
+          document.getElementById('favoriteBooksList').innerHTML = 
+            '<p style="color: #9ca3af; text-align: center; padding: 40px;">No favorite books yet. Start exploring!</p>';
         }
+
+        // Fetch all books to check reading progress
+        const allBooks = await getAllBooks();
+        
+        // Get reading progress for each book
+        let currentlyReadingList = [];
+        let finishedCount = 0;
+        let totalBookmarks = 0;
+        let categoryCount = {};
+
+        for (const book of allBooks) {
+          try {
+            const progress = await getProgress(book._id);
+            
+            if (progress && progress.lastReadPage > 1) {
+              const progressPercent = (progress.lastReadPage / book.totalPages) * 100;
+              
+              if (progressPercent >= 100) {
+                finishedCount++;
+              } else if (progressPercent > 0) {
+                currentlyReadingList.push({
+                  ...book,
+                  progress: progressPercent,
+                  lastPage: progress.lastReadPage
+                });
+              }
+
+              // Count bookmarks
+              if (progress.bookmarks && progress.bookmarks.length > 0) {
+                totalBookmarks += progress.bookmarks.length;
+              }
+            }
+
+            // Count categories
+            if (book.category) {
+              categoryCount[book.category] = (categoryCount[book.category] || 0) + 1;
+            }
+          } catch (err) {
+            // Skip if progress not found
+          }
+        }
+
+        userStats.currentlyReading = currentlyReadingList.length;
+        userStats.finished = finishedCount;
+        userStats.totalBookmarks = totalBookmarks;
+        userStats.categories = categoryCount;
+
+        // Update stat cards
+        document.getElementById('currentlyReading').textContent = userStats.currentlyReading;
+        document.getElementById('finishedBooks').textContent = userStats.finished;
+        document.getElementById('totalBookmarks').textContent = userStats.totalBookmarks;
+
+        // Fetch additional user stats (reviews)
+        const additionalStats = await getUserStats();
+        document.getElementById('reviewsWritten').textContent = additionalStats.reviewsWritten || 0;
+
+        // Display currently reading books
+        if (currentlyReadingList.length > 0) {
+          displayBooksWithProgress(currentlyReadingList.slice(0, 6), 'currentlyReadingBooks');
+        } else {
+          document.getElementById('currentlyReadingBooks').innerHTML = 
+            '<p style="color: #9ca3af; text-align: center; padding: 40px;">No books in progress. Start reading now!</p>';
+        }
+
+      } catch (error) {
+        console.error('Error loading stats:', error);
+      }
     }
 
-      function showMessage(msg) {
-        const elem = document.getElementById('successMsg');
-        elem.textContent = msg;
-        elem.style.display = 'block';
-        setTimeout(() => { elem.style.display = 'none'; }, 3000);
-      }
-
-
-    function logoutUser() {
-      if (confirm('Are you sure you want to logout?')) {
-        logout();
-      }
+    function displayBooks(books, containerId) {
+      const container = document.getElementById(containerId);
+      container.innerHTML = books.map(book => `
+        <div class="book-card" onclick="openBook('${book._id}')">
+          <img src="${book.coverImage || '/assets/images/placeholder-book.jpg'}" 
+               alt="${book.title}" 
+               class="book-cover"
+               onerror="this.src='/assets/images/placeholder-book.jpg'">
+          <div class="book-info">
+            <div class="book-title">${book.title}</div>
+            <div class="book-author">${book.author}</div>
+          </div>
+        </div>
+      `).join('');
     }
 
-    function goHome() {
+    function displayBooksWithProgress(books, containerId) {
+      const container = document.getElementById(containerId);
+      container.innerHTML = books.map(book => `
+        <div class="book-card" onclick="openBook('${book._id}')">
+          <img src="${book.coverImage || '/assets/images/placeholder-book.jpg'}" 
+               alt="${book.title}" 
+               class="book-cover"
+               onerror="this.src='/assets/images/placeholder-book.jpg'">
+          <div class="book-info">
+            <div class="book-title">${book.title}</div>
+            <div class="book-author">${book.author}</div>
+            <div class="book-progress">
+              <div class="book-progress-bar" style="width: ${book.progress}%"></div>
+            </div>
+          </div>
+        </div>
+      `).join('');
+    }
+
+    function generateActivityHeatmap() {
+      const heatmapGrid = document.getElementById('activityHeatmap');
+      if (!heatmapGrid) return;
+
+      // Generate 371 cells (53 weeks × 7 days)
+      const totalCells = 371;
+      let html = '';
+
+      for (let i = 0; i < totalCells; i++) {
+        // All cells start empty (level 0)
+        const level = 0;
+        const title = 'No activity';
+        html += `<div class="heatmap-cell" data-level="${level}" title="${title}"></div>`;
+      }
+
+      heatmapGrid.innerHTML = html;
+    }
+
+    function openBook(bookId) {
+      window.location.href = `reader.html?id=${bookId}`;
+    }
+
+    function goBack() {
       window.location.href = '../main.html';
     }
+
+    function logout() {
+      if (confirm('Are you sure you want to logout?')) {
+        localStorage.removeItem('token');
+        localStorage.removeItem('user');
+        window.location.href = 'login.html';
+      }
+    }
+
   </script>
 </body>
 </html>

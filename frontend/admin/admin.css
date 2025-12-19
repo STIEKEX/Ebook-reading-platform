@@ -119,6 +119,28 @@
     gap: 12px;
 }
 
+.admin-profile #adminName {
+    font-weight: 600;
+    color: #0f172a;
+}
+
+.btn-logout {
+    background: #fff;
+    color: #ef4444;
+    border: 1px solid #fee2e2;
+    padding: 8px 16px;
+    border-radius: 8px;
+    cursor: pointer;
+    transition: all 0.2s;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+}
+
+.btn-logout:hover {
+    background: #fee2e2;
+}
+
 .admin-avatar {
     width: 40px;
     height: 40px;
@@ -134,9 +156,15 @@
 /* Stats Grid */
 .stats-grid {
     display: grid;
-    grid-template-columns: repeat(auto-fit, minmax(240px, 1fr));
+    grid-template-columns: repeat(4, 1fr);
     gap: 24px;
     margin-bottom: 32px;
+}
+
+@media (max-width: 1200px) {
+    .stats-grid {
+        grid-template-columns: repeat(2, 1fr);
+    }
 }
 
 .stat-card {
@@ -164,8 +192,9 @@
 
 .stat-icon.books { background: #fff7e6; color: #ffc12c; }
 .stat-icon.users { background: #dcfce7; color: #16a34a; }
-.stat-icon.reviews { background: #e0f2fe; color: #0ea5e9; }
-.stat-icon.reads { background: #fae8ff; color: #d946ef; }
+.stat-icon.uploads { background: #e0f2fe; color: #0ea5e9; }
+.stat-icon.reviews { background: #fae8ff; color: #d946ef; }
+.stat-icon.reads { background: #fef3c7; color: #f59e0b; }
 
 .stat-content h3 {
     font-size: 24px;
@@ -177,6 +206,32 @@
 .stat-content p {
     color: #64748b;
     font-size: 14px;
+}
+
+/* Charts Section */
+.charts-section {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(400px, 1fr));
+    gap: 24px;
+    margin-bottom: 32px;
+}
+
+.chart-card {
+    background: #fff;
+    border-radius: 12px;
+    padding: 24px;
+    box-shadow: 0 4px 6px -1px rgba(0,0,0,0.1);
+}
+
+.chart-card h3 {
+    font-size: 16px;
+    font-weight: 600;
+    color: #0f172a;
+    margin-bottom: 20px;
+}
+
+.chart-card canvas {
+    max-height: 300px;
 }
 
 /* Activity Section */
@@ -191,30 +246,19 @@
     margin-bottom: 16px;
 }
 
-.activity-grid {
-    display: grid;
-    grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
-    gap: 24px;
-}
-
-.activity-card {
+.activity-section .activity-list {
     background: #fff;
     border-radius: 12px;
     padding: 20px;
     box-shadow: 0 4px 6px -1px rgba(0,0,0,0.1);
-}
-
-.activity-card h3 {
-    font-size: 16px;
-    font-weight: 600;
-    color: #0f172a;
-    margin-bottom: 16px;
+    max-height: 500px;
+    overflow-y: auto;
 }
 
 .activity-list {
     display: flex;
     flex-direction: column;
-    gap: 12px;
+    gap: 8px;
 }
 
 .activity-item {
@@ -224,6 +268,17 @@
     padding: 12px;
     background: #f8fafc;
     border-radius: 8px;
+    transition: all 0.2s;
+}
+
+.activity-item:hover {
+    background: #f1f5f9;
+}
+
+.activity-item i {
+    font-size: 24px;
+    color: #ffc12c;
+    min-width: 24px;
 }
 
 .activity-item img {
@@ -233,17 +288,18 @@
     object-fit: cover;
 }
 
-.activity-item .item-content {
+.activity-content {
     flex: 1;
 }
 
-.activity-item .item-title {
+.activity-title {
     font-weight: 600;
     color: #0f172a;
     margin-bottom: 2px;
+    font-size: 14px;
 }
 
-.activity-item .item-subtitle {
+.activity-time {
     font-size: 12px;
     color: #64748b;
 }
@@ -282,8 +338,19 @@
         gap: 16px;
     }
 
+    .charts-section {
+        grid-template-columns: 1fr;
+        gap: 16px;
+    }
+
     .activity-grid {
         grid-template-columns: 1fr;
         gap: 16px;
+    }
+
+    .admin-header {
+        flex-direction: column;
+        align-items: flex-start;
+        gap: 12px;
     }
 }

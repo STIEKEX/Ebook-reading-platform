@@ -10,6 +10,7 @@ const userSchema = new mongoose.Schema(
     profile: {
       name: { type: String, default: '' },
       avatar: { type: String, default: '' },
+      lastNameChange: { type: Date, default: null },
     },
   },
   { timestamps: true }

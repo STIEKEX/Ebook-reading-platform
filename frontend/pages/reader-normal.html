@@ -1,0 +1,128 @@
+<!DOCTYPE html>
+<html lang="en" class="reader--day">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Reader – Focus Mode</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Georgia:wght@400;700&family=Inter:wght@400;600&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="../css/reader-normal.css" />
+</head>
+<body class="reader-normal">
+  <div class="normal-reader-container" aria-label="Reading Surface">
+    <div class="reader-surface">
+      <div id="readerContentWrapper" class="reader-content-wrapper" tabindex="0" aria-live="polite">
+        <article id="readerPage" class="reader-page" role="main" aria-label="Book Content">
+          <h1 id="chapterTitle">Loading…</h1>
+          <div id="chapterBody"></div>
+        </article>
+      </div>
+    </div>
+  </div>
+
+  <!-- Progress bar -->
+  <div id="readerProgress" class="reader-progress" aria-hidden="true">
+    <div id="readerProgressBar" class="reader-progress__bar"></div>
+    <div id="readerProgressLabel" style="position:absolute;right:10px;top:-22px;font-size:12px;color:#777;">&nbsp;</div>
+  </div>
+
+  <!-- Floating Action Button -->
+  <button id="readerFab" class="reader-fab" aria-label="Reader menu" title="Reader menu" aria-controls="readerPanel">
+    •••
+  </button>
+
+  <!-- Slide-out side panel -->
+  <aside id="readerPanel" class="reader-panel" aria-hidden="true" aria-label="Reader panel">
+    <div class="reader-panel__header">
+      <nav class="reader-panel__tabs" aria-label="Reader tools">
+        <button class="reader-panel__tab active" data-tab="toc">TOC</button>
+        <button class="reader-panel__tab" data-tab="search">Search</button>
+        <button class="reader-panel__tab" data-tab="bookmarks">Bookmarks</button>
+        <button class="reader-panel__tab" data-tab="favorites">Favourite Lines</button>
+        <button class="reader-panel__tab" data-tab="settings">Settings</button>
+      </nav>
+    </div>
+    <div id="panelBody" class="reader-panel__body">
+      <!-- TOC -->
+      <div data-panel="toc">
+        <ul id="tocList" class="toc-list"></ul>
+      </div>
+      <!-- Search -->
+      <div data-panel="search" hidden>
+        <input id="searchInput" class="search-input" type="search" placeholder="Search in book…" aria-label="Search in book" />
+        <div id="searchResults"></div>
+      </div>
+      <!-- Bookmarks -->
+      <div data-panel="bookmarks" hidden>
+        <div id="bookmarkList"></div>
+      </div>
+      <!-- Favourites -->
+      <div data-panel="favorites" hidden>
+        <div id="favoritesList"></div>
+      </div>
+      <!-- Settings -->
+      <div data-panel="settings" hidden>
+        <div class="settings-group">
+          <div class="settings-row"><label>Theme</label>
+            <select id="themeSelect" class="settings-select">
+              <option value="day">White</option>
+              <option value="dark">Dark</option>
+              <option value="sepia">Sepia</option>
+              <option value="cream">Cream</option>
+              <option value="warm">Warm Paper</option>
+            </select>
+          </div>
+          <div class="settings-row"><label>Font</label>
+            <select id="fontSelect" class="settings-select">
+              <option value="Georgia">Georgia</option>
+              <option value="Garamond">Garamond</option>
+              <option value="Bookerly">Bookerly</option>
+              <option value="Palatino">Palatino</option>
+              <option value="Inter">Inter (Sans)</option>
+              <option value="OpenDyslexic">OpenDyslexic (Accessibility)</option>
+            </select>
+          </div>
+          <div class="settings-row"><label>Font size</label>
+            <input id="fontSizeRange" type="range" min="14" max="24" value="18" />
+          </div>
+          <div class="settings-row"><label>Line height</label>
+            <input id="lineHeightRange" type="range" min="1.4" max="2.2" step="0.05" value="1.75" />
+          </div>
+          <div class="settings-row"><label>Margins</label>
+            <input id="marginRange" type="range" min="56" max="96" value="64" />
+          </div>
+          <div class="settings-row"><label>Justify</label>
+            <select id="justifySelect" class="settings-select">
+              <option value="left">Ragged right</option>
+              <option value="justify">Justified</option>
+            </select>
+          </div>
+          <div class="settings-row"><label>Scroll</label>
+            <select id="scrollModeSelect" class="settings-select">
+              <option value="vertical">Vertical</option>
+              <option value="horizontal">Horizontal (pages)</option>
+            </select>
+          </div>
+          <div class="settings-row"><label><input id="focusModeToggle" type="checkbox" /> Focus mode</label></div>
+        </div>
+      </div>
+    </div>
+  </aside>
+
+  <!-- Selection toolbar -->
+  <div id="selectionToolbar" class="selection-toolbar" role="toolbar" aria-hidden="true">
+    <button data-action="highlight">Highlight</button>
+    <button data-action="favorite">Add to Favourite Lines</button>
+    <button data-action="define">Define</button>
+    <button data-action="note">Add note</button>
+  </div>
+
+  <!-- Dictionary popup -->
+  <div id="dictPopup" class="dict-popup" role="dialog" aria-modal="false"></div>
+
+  <script src="../js/config.js"></script>
+  <script src="../js/api.js"></script>
+  <script src="../js/reader-normal.js"></script>
+</body>
+</html>

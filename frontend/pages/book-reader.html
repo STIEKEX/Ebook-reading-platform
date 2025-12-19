@@ -1,0 +1,212 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Premium 3D Book Reader</title>
+    <link rel="stylesheet" href="../css/main.css">
+    <link rel="stylesheet" href="../css/book-reader.css">
+    <link href='https://unpkg.com/boxicons@2.1.4/css/boxicons.min.css' rel='stylesheet'>
+    <!-- GSAP for smooth animations -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.2/gsap.min.js"></script>
+    <!-- PDF.js for rendering PDFs in the 3D reader -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/pdf.js/4.2.67/pdf.min.js"></script>
+</head>
+<body>
+    <!-- 3D Book Reader Container -->
+    <div class="book-reader-container" id="bookReader">
+        <!-- Loading Animation -->
+        <div class="loading-book" id="loadingBook">
+            <div class="loading-spinner"></div>
+            <div class="loading-text">Loading your book...</div>
+        </div>
+
+        <!-- Reading Timer -->
+        <div class="reading-timer" id="readingTimer">
+            <i class='bx bx-time'></i>
+            <span id="timerDisplay">00:00</span>
+        </div>
+
+        <!-- Close Button -->
+        <button id="closeReaderBtn" class="close-reader-btn" title="Close"><i class='bx bx-x'></i></button>
+
+        <!-- Toolbar replaced by Floating Action Button & Panel -->
+        <button id="readerFab" class="reader-fab" title="Menu"><i class='bx bx-dots-horizontal-rounded'></i></button>
+        <aside id="readerPanel" class="reader-panel" aria-hidden="true">
+            <div class="reader-panel-header">
+                <div class="reader-panel-title">Reader Menu</div>
+                <button class="reader-panel-close" id="readerPanelClose" aria-label="Close menu"><i class='bx bx-x'></i></button>
+            </div>
+            <div class="panel-tabs" role="tablist" aria-label="Reader tabs">
+                <button class="panel-tab" data-action="open-toc" role="tab"><i class='bx bx-list-ul'></i><span class="tab-label">TOC</span></button>
+                <button class="panel-tab" data-action="open-bookmarks" role="tab"><i class='bx bx-bookmark'></i><span class="tab-label">Bookmarks</span></button>
+                <button class="panel-tab" data-action="open-search" role="tab"><i class='bx bx-search'></i><span class="tab-label">Search</span></button>
+                <button class="panel-tab" data-action="open-settings" role="tab"><i class='bx bx-cog'></i><span class="tab-label">Settings</span></button>
+            </div>
+
+            <div class="panel-content">
+                <div class="panel-actions">
+                    <button data-action="toggle-timer"><i class='bx bx-time'></i><span class="action-label">Reading Timer</span></button>
+                    <button data-action="mode-day"><i class='bx bx-sun'></i><span class="action-label">Day</span></button>
+                    <button data-action="mode-night"><i class='bx bx-moon'></i><span class="action-label">Night</span></button>
+                    <button data-action="mode-sepia"><i class='bx bx-book'></i><span class="action-label">Sepia</span></button>
+                    <button data-action="fullscreen"><i class='bx bx-fullscreen'></i><span class="action-label">Fullscreen</span></button>
+                    <button data-action="bookmark-add"><i class='bx bx-bookmark-plus'></i><span class="action-label">Add Bookmark</span></button>
+                    <button data-action="download"><i class='bx bx-download'></i><span class="action-label">Download</span></button>
+                </div>
+            </div>
+        </aside>
+
+        <!-- Reader Wrapper -->
+        <div class="reader-wrapper">
+            <!-- Navigation Buttons -->
+            <div class="reader-nav left">
+                <button class="nav-btn" id="prevPageBtn">
+                    <i class='bx bx-chevron-left'></i>
+                </button>
+            </div>
+
+            <!-- 3D Book Container -->
+            <div class="book-3d-container" id="book3D">
+                <!-- Book Cover -->
+                <div class="book-cover" id="bookCover">
+                    <img src="" alt="Book Cover" class="cover-image" id="coverImage">
+                    <div class="cover-content">
+                        <h1 class="cover-title" id="coverTitle">Book Title</h1>
+                        <p class="cover-author" id="coverAuthor">Author Name</p>
+                    </div>
+                </div>
+
+                <!-- Book Pages -->
+                <div class="book-pages" id="bookPages">
+                    <!-- Pages will be dynamically generated -->
+                </div>
+            </div>
+
+            <!-- Navigation Buttons -->
+            <div class="reader-nav right">
+                <button class="nav-btn" id="nextPageBtn">
+                    <i class='bx bx-chevron-right'></i>
+                </button>
+            </div>
+        </div>
+
+        <!-- Slim Floating Progress -->
+        <div class="reader-progress" id="readerProgress" aria-hidden="true">
+            <div class="progress-inner" id="progressFill"></div>
+            <div class="progress-label" id="progressText">Page 1 of 100</div>
+        </div>
+
+        <!-- Table of Contents Panel -->
+        <div class="toc-panel" id="tocPanel">
+            <div class="panel-header">
+                <button class="panel-back-btn" id="tocBackBtn"><i class='bx bx-arrow-back'></i></button>
+                <h2 class="toc-header">Table of Contents</h2>
+            </div>
+            <div id="tocList">
+                <!-- TOC items will be dynamically generated -->
+            </div>
+        </div>
+
+        <!-- Bookmarks Panel -->
+        <div class="bookmarks-panel" id="bookmarksPanel">
+            <div class="panel-header">
+                <button class="panel-back-btn" id="bookmarksBackBtn"><i class='bx bx-arrow-back'></i></button>
+                <h3 style="margin-bottom: 0; color: #333;">My Bookmarks</h3>
+            </div>
+            <div id="bookmarksList" style="margin-top: 20px;">
+                <p style="text-align: center; color: #999;">No bookmarks yet</p>
+            </div>
+        </div>
+
+        <!-- Settings Panel -->
+        <div class="settings-panel" id="settingsPanel">
+            <div class="panel-header">
+                <button class="panel-back-btn" id="settingsBackBtn"><i class='bx bx-arrow-back'></i></button>
+                <h3 style="margin-bottom: 0; color: #333;">Reading Settings</h3>
+            </div>
+            <div class="settings-content" style="margin-top: 20px;">
+            <div class="setting-group">
+                <label class="setting-label">Font Family</label>
+                <select class="setting-input" id="fontFamily">
+                    <option value="Georgia, 'Times New Roman', serif">Georgia</option>
+                    <option value="'Arial', sans-serif">Arial</option>
+                    <option value="'Helvetica', sans-serif">Helvetica</option>
+                    <option value="'Palatino', serif">Palatino</option>
+                    <option value="'Garamond', serif">Garamond</option>
+                    <option value="'Bookman', serif">Bookman</option>
+                </select>
+            </div>
+
+            <div class="setting-group">
+                <label class="setting-label">Font Size</label>
+                <div class="font-size-controls">
+                    <button class="font-btn" id="fontDecrease">A-</button>
+                    <span id="fontSizeDisplay">18px</span>
+                    <button class="font-btn" id="fontIncrease">A+</button>
+                </div>
+            </div>
+
+            <div class="setting-group">
+                <label class="setting-label">Line Height</label>
+                <input type="range" class="setting-input" id="lineHeight" min="1.2" max="2.5" step="0.1" value="1.8">
+                <span id="lineHeightDisplay">1.8</span>
+            </div>
+
+            <div class="setting-group">
+                <label class="setting-label">Page Width (%)</label>
+                <input type="range" class="setting-input" id="pageWidth" min="70" max="100" step="5" value="100">
+                <span id="pageWidthDisplay">100%</span>
+            </div>
+
+            <div class="setting-group">
+                <label class="setting-label">
+                    <input type="checkbox" id="autoScroll"> Auto-scroll Mode
+                </label>
+            </div>
+
+            <div class="setting-group">
+                <label class="setting-label">
+                    <input type="checkbox" id="soundEffects" checked> Page Turn Sound
+                </label>
+            </div>
+            </div>
+        </div>
+
+        <!-- Search Panel -->
+        <div class="search-panel" id="searchPanel">
+            <div class="panel-header">
+                <button class="panel-back-btn" id="searchBackBtn"><i class='bx bx-arrow-back'></i></button>
+                <h3 style="margin-bottom: 0; color: #333;">Search</h3>
+            </div>
+            <input type="text" class="search-input" id="searchInput" placeholder="Search in book..." style="margin-top: 20px;">
+            <div class="search-results" id="searchResults">
+                <!-- Search results will appear here -->
+            </div>
+        </div>
+
+        <!-- Dictionary Popup -->
+        <div class="dictionary-popup" id="dictionaryPopup">
+            <h4 class="dictionary-word" id="dictWord"></h4>
+            <p class="dictionary-definition" id="dictDefinition"></p>
+        </div>
+
+        <!-- Selection Popup -->
+        <div class="selection-popup" id="selectionPopup" aria-hidden="true">
+            <button data-action="highlight" title="Highlight"><i class='bx bxs-color-fill'></i></button>
+            <button data-action="favorite" title="Favourite Line"><i class='bx bx-heart'></i></button>
+            <button data-action="note" title="Add Note"><i class='bx bx-note'></i></button>
+            <button data-action="copy" title="Copy"><i class='bx bx-copy'></i></button>
+        </div>
+    </div>
+
+    <!-- Audio for page turn sound -->
+    <audio id="pageTurnSound" preload="auto">
+        <source src="data:audio/wav;base64,UklGRnoGAABXQVZFZm10IBAAAAABAAEAQB8AAEAfAAABAAgAZGF0YQoGAACBhYqFbF1fdJivrJBhNjVgodDbq2EcBj+a2/LDciUFLIHO8tiJNwgZaLvt559NEAxQp+PwtmMcBjiR1/LMeSwFJHfH8N2QQAoUXrTp66hVFApGn+DyvmwhBSuBzvLZiTYIF2W86+OdTwwPVKzn77RgGwU7k9jyzX4tBSt+zPDai0AIEmKx6eirWhwMTKXh8LJnHAU3ktbyz3wsBSt9y/DbkkIJFlux6eKeTwwPVKzn77RgGwU7k9jyzX4tBSt+zPDai0AIEmKx6eKeTwwPVKzn77RgGwU7k9jyzX4tBSt+zPDai0AIEmKx6eKeTwwPVKzn77RgGwU7k9jyzX4tBSt+zPDai0AIEmKx6eKeTwwPVKzn77RgGwU7k9jyzX4tBSt+zPDai0AIEmKx6eKeTwwPVKzn77RgGwU7k9jyzX4tBSt+zPDai0AIEmKx6eKeTwwPVKzn77RgGwU7k9jyzX4tBSt+zPDai0AIEmKx6eKeTwwPVKzn77RgGwU7k9jyzX4tBSt+zPDai0AIEmKx6eKeTwwPVKzn77RgGwU7k9jyzX4tBSt+zPDai0AIEmKx6eKeTwwPVKzn77RgGwU7k9jyzX4tBSt+zPDai0AIEmKx6eKeTwwPVKzn77RgGwU7k9jyzX4tBSt+zPDai0AIEmKx6eKeTwwPVKzn77RgGwU7k9jyzX4tBSt+zPDai0AIEmKx6eKeTwwPVKzn77RgGwU7k9jyzX4tBSt+zPDai0AIEmKx6eKeTwwPVKzn77RgGwU7k9jyzX4tBSt+zPDai0AIEmKx6eKeTwwPVKzn77RgGwU7k9jyzX4tBSt+zPDai0AIEmKx6eKeTwwPVKzn77RgGwU7k9jyzX4tBSt+zPDai0AIEmKx6eKeTwwPVKzn77RgGwU7k9jyzX4tBSt+zPDai0AIEmKx6eKeTwwPVKzn77RgGwU7k9jyzX4tBSt+zPDai0AIEmKx6eKeTwwPVKzn77RgGwU7k9jyzX4tBSt+zPDai0AIEmKx6eKeTwwPVKzn77RgGwU7k9jyzX4tBSt+zPDai0AIEmKx6eKeTwwPVKzn77RgGwU7k9jyzX4tBSt+zPDai0AIEmKx6eKeTwwPVKzn77RgGwU7k9jyzX4tBSt+zPDai0AIEmKx6eKeTwwPVKzn77RgGwU7k9jyzX4tBSt+zPDai0AIEmKx6eKeTwwPVKzn77RgGwU7k9jyzX4tBSt+zPDai0AIEmKx6eKeTwwPVKzn77RgGwU7k9jyzX4tBSt+zPDai0AIEmKx6eKeTwwPVKzn77RgGwU7k9jyzX4tBSt+zPDai0AIEmKx6eKeTwwPVKzn77RgGwU7k9jyzX4tBSt+zPDai0AIEmKx6eKeTwwPVKzn77RgGwU7k9jyzX4tBSt+zPDai0AIEmKx6eKeTwwPVKzn77RgGwU7k9jyzX4tBSt+zPDai0AIEmKx6eKeTwwPVKzn77RgGwU7k9jyzX4tBSt+zPDai0AIEmKx6eKeTwwPVKzn77RgGwU7k9jyzX4tBSt+zPDai0AIEmKx6eKeTwwPVKzn77RgGwU7k9jyzX4tBSt+zPDai0AIEmKx6eKeTwwPVKzn77RgGwU7k9jyzX4tBSt+zPDai0AIEmKx6eKeTwwPVKzn77RgGwU7k9jyzX4tBSt+zPDai0AIEmKx6eKeTwwPVKzn77RgGwU7k9jyzX4tBSt+zPDai0AIEmKx6eKeTwwPVKzn77RgGwU7k9jyzX4tBSt+zPDai0AIEmKx6eKeTwwPVKzn77RgGwU7k9jyzX4tBSt+zPDai0AIEmKx6eKeTwwPVKzn77RgGwU7k9jyzX4tBSt+zPDai0AI" type="audio/wav">
+    </audio>
+
+    <!-- Book Reader JavaScript -->
+    <script src="../js/api.js"></script>
+    <script src="../js/book-reader.js"></script>
+</body>
+</html>
